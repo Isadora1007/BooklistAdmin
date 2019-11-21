@@ -1,0 +1,6 @@
+﻿Functionalities
+1. Build sign-in page
+
+Design changes
+2. Remove elevation from app bar
+
