@@ -28,11 +28,10 @@ const BookList = () => {
     return (
         <Fragment>
             <Grid item xs={12}>
-                <Paper className={classes.paper}>xs=12</Paper>
+
             </Grid>
             <Grid item xs={12}>
                 <Paper className={classes.paper}>
-                    <Typography variant="h2" gutterBottom>Book list</Typography>
                     <Table rows={bookLists}/>
                 </Paper>
             </Grid>

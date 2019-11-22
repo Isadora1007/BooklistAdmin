@@ -11,15 +11,16 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
-
+//import FilterListIcon from '@material-ui/icons/FilterList';
+import AddIcon from '@material-ui/icons/Add';
+import EditIcon from '@material-ui/icons/Edit';
+import Fab from '@material-ui/core/Fab';
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -49,6 +50,7 @@ const headCells = [
     { id: 'title', numeric: false, disablePadding: true, label: 'Title' },
     { id: 'owner', numeric: false, disablePadding: false, label: 'Owner' },
     { id: 'active', numeric: false, disablePadding: false, label: 'In use' },
+    { id: 'actions', numeric: false, disablePadding: false, label: 'Actions' },
     
 ];
 
@@ -66,7 +68,7 @@ function EnhancedTableHead(props) {
                         indeterminate={numSelected > 0 && numSelected < rowCount}
                         checked={numSelected === rowCount}
                         onChange={onSelectAllClick}
-                        //inputProps={{ 'aria-label': 'select all desserts' }}
+                        inputProps={{ 'aria-label': 'select all lists' }}
                     />
                 </TableCell>
                 {headCells.map(headCell => (
@@ -138,24 +140,24 @@ const EnhancedTableToolbar = props => {
             {numSelected > 0 ? (
                 <Typography className={classes.title} color="inherit" variant="subtitle1">
                     {numSelected} selected
-        </Typography>
+                </Typography>
             ) : (
-                    <Typography className={classes.title} variant="h6" id="tableTitle">
+                    <Typography className={classes.title} variant="h5" id="tableTitle">
                         Book list
-        </Typography>
+                    </Typography>
                 )}
 
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
-                    <IconButton aria-label="delete">
+                    <IconButton aria-label="delete selected book list">
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
             ) : (
-                    <Tooltip title="Filter list">
-                        <IconButton aria-label="filter list">
-                            <FilterListIcon />
-                        </IconButton>
+                    <Tooltip title="Add new book list">
+                        <Fab color="secondary" aria-label="add" size="medium">
+                            <AddIcon />
+                        </Fab>
                     </Tooltip>
                 )}
         </Toolbar>
@@ -170,10 +172,6 @@ const useStyles = makeStyles(theme => ({
     root: {
         width: '100%',
         marginTop: theme.spacing(3),
-    },
-    paper: {
-        width: '100%',
-        marginBottom: theme.spacing(2),
     },
     table: {
         minWidth: 750,
@@ -200,7 +198,6 @@ const EnhancedTable = ({rows}) => {
     const [orderBy, setOrderBy] = React.useState('title');
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
-    const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
     const handleRequestSort = (event, property) => {
@@ -247,9 +244,9 @@ const EnhancedTable = ({rows}) => {
         setPage(0);
     };
 
-    const handleChangeDense = event => {
-        setDense(event.target.checked);
-    };
+    //const handleChangeDense = event => {
+    //    setDense(event.target.checked);
+    //};
 
     const isSelected = tile => selected.indexOf(tile) !== -1;
 
@@ -257,14 +254,14 @@ const EnhancedTable = ({rows}) => {
 
     return (
         <div className={classes.root}>
-            <Paper className={classes.paper}>
+            
                 <EnhancedTableToolbar numSelected={selected.length} />
                 <div className={classes.tableWrapper}>
                     <Table
-                        className={classes.table}
-                        aria-labelledby="tableTitle"
-                        size={dense ? 'small' : 'medium'}
-                        aria-label="enhanced table"
+                    className={classes.table}
+                    aria-labelledby="tableTitle"
+                    size='small'
+                    aria-label="enhanced table"
                     >
                         <EnhancedTableHead
                             classes={classes}
@@ -303,12 +300,20 @@ const EnhancedTable = ({rows}) => {
                                             </TableCell>
                                             <TableCell align="left">{row.owner}</TableCell>
                                             <TableCell align="left">{row.active ? 'Yes': 'No'}</TableCell>
+                                            <TableCell align="left">
+                                                <IconButton aria-label="delete">
+                                                    <DeleteIcon fontSize="small" />
+                                                </IconButton>
+                                                <IconButton aria-label="edit">
+                                                    <EditIcon fontSize="small" />
+                                                </IconButton>
+                                            </TableCell>
 
                                         </TableRow>
                                     );
                                 })}
                             {emptyRows > 0 && (
-                                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                                <TableRow style={{ height: 33 * emptyRows }}>
                                     <TableCell colSpan={6} />
                                 </TableRow>
                             )}
@@ -330,11 +335,6 @@ const EnhancedTable = ({rows}) => {
                     onChangePage={handleChangePage}
                     onChangeRowsPerPage={handleChangeRowsPerPage}
                 />
-            </Paper>
-            <FormControlLabel
-                control={<Switch checked={dense} onChange={handleChangeDense} />}
-                label="Dense padding"
-            />
         </div>
     );
 }
