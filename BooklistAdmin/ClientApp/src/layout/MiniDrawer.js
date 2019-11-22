@@ -22,12 +22,6 @@ import CollectionsBookmarkIcon from '@material-ui/icons/CollectionsBookmark';
 import Grid from './AppBody'
 import { Link } from "react-router-dom";
 
-import BookList from '../pages/BookList'
-import BookListLayout from '../pages/BookListLayout'
-import Collections from '../pages/Collections'
-import Displays from '../pages/Displays'
-import SignIn from '../pages/SignIn'
-
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({

@@ -1,9 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-//import './index.css';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core'
-import teal from '@material-ui/core/colors/teal'
-
 import App from './App';
 
 const theme = createMuiTheme({

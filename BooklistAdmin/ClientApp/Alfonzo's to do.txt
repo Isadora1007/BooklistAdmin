@@ -1,6 +1,20 @@
 ﻿Functionalities
-1. Build sign-in page
+1. Sig in
+2. Private routes
+
+Pages
+1. Create master pages
+- 1.2 book layout
+- 1.3 Collections
+- 1.4 Displays
+2. Create sign-in page
+3. Create detail pages
+- 1.1 book list
+- 1.2 book layout
+- 1.3 Collections
+- 1.4 Displays
+2. Create sign-in page
 
 Design changes
-2. Remove elevation from app bar
+1. Remove elevation from app bar
 
