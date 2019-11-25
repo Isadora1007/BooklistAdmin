@@ -1,6 +1,6 @@
 import React from 'react';
 import PersistentDrawer from './layout/MiniDrawer'
-import { BrowserRouter as Router } from "react-router-dom"
+import { BrowserRouter as Router } from 'react-router-dom'
 import './App.css';
 
 function App() {
