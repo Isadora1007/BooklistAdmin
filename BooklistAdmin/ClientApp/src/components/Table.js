@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { lighten, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -14,13 +14,11 @@ import Typography from '@material-ui/core/Typography';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
-//import FilterListIcon from '@material-ui/icons/FilterList';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import Fab from '@material-ui/core/Fab';
+
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -46,12 +44,11 @@ function getSorting(order, orderBy) {
     return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
 }
 
+//Change table heading lables here
 const headCells = [
-    { id: 'title', numeric: false, disablePadding: true, label: 'Title' },
-    { id: 'owner', numeric: false, disablePadding: false, label: 'Owner' },
-    { id: 'active', numeric: false, disablePadding: false, label: 'In use' },
-    { id: 'actions', numeric: false, disablePadding: false, label: 'Actions' },
-    
+    { id: 'title', disablePadding: true, label: 'Title' },
+    { id: 'owner', disablePadding: false, label: 'Owner' },
+    { id: 'active', disablePadding: false, label: 'In use' },   
 ];
 
 function EnhancedTableHead(props) {
@@ -74,7 +71,6 @@ function EnhancedTableHead(props) {
                 {headCells.map(headCell => (
                     <TableCell
                         key={headCell.id}
-                        align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'default'}
                         sortDirection={orderBy === headCell.id ? order : false}
                     >
@@ -82,6 +78,7 @@ function EnhancedTableHead(props) {
                             active={orderBy === headCell.id}
                             direction={order}
                             onClick={createSortHandler(headCell.id)}
+                            
                         >
                             {headCell.label}
                             {orderBy === headCell.id ? (
@@ -110,18 +107,8 @@ EnhancedTableHead.propTypes = {
 const useToolbarStyles = makeStyles(theme => ({
     root: {
         paddingLeft: theme.spacing(2),
-        paddingRight: theme.spacing(1),
+        paddingRight: theme.spacing(0),
     },
-    highlight:
-        theme.palette.type === 'light'
-            ? {
-                color: theme.palette.secondary.main,
-                backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-            }
-            : {
-                color: theme.palette.text.primary,
-                backgroundColor: theme.palette.secondary.dark,
-            },
     title: {
         flex: '1 1 100%',
     },
@@ -130,36 +117,28 @@ const useToolbarStyles = makeStyles(theme => ({
 const EnhancedTableToolbar = props => {
     const classes = useToolbarStyles();
     const { numSelected } = props;
-
     return (
-        <Toolbar
-            className={clsx(classes.root, {
-                [classes.highlight]: numSelected > 0,
-            })}
-        >
-            {numSelected > 0 ? (
-                <Typography className={classes.title} color="inherit" variant="subtitle1">
-                    {numSelected} selected
-                </Typography>
-            ) : (
-                    <Typography className={classes.title} variant="h5" id="tableTitle">
-                        Book list
-                    </Typography>
-                )}
-
-            {numSelected > 0 ? (
-                <Tooltip title="Delete">
-                    <IconButton aria-label="delete selected book list">
+        <Toolbar className={classes.root}>
+            { numSelected === 1 ?
+                <Tooltip title="Edit selected book list">
+                    <IconButton aria-label="Edit selected book list">
+                        <EditIcon />
+                    </IconButton>
+                </Tooltip> : null
+            }
+            { numSelected > 0 ?
+                <Tooltip title="Delete selected book list">
+                    <IconButton aria-label="Delete selected book list">
                         <DeleteIcon />
                     </IconButton>
-                </Tooltip>
-            ) : (
-                    <Tooltip title="Add new book list">
-                        <Fab color="secondary" aria-label="add" size="medium">
-                            <AddIcon />
-                        </Fab>
-                    </Tooltip>
-                )}
+                </Tooltip> : null
+            }
+            
+            <Tooltip title="Add new book list">
+                <Fab color="secondary" aria-label="add" size="small">
+                    <AddIcon />
+                </Fab>
+            </Tooltip>
         </Toolbar>
     );
 };
@@ -171,7 +150,7 @@ EnhancedTableToolbar.propTypes = {
 const useStyles = makeStyles(theme => ({
     root: {
         width: '100%',
-        marginTop: theme.spacing(3),
+        //marginTop: theme.spacing(3),
     },
     table: {
         minWidth: 750,
@@ -244,10 +223,6 @@ const EnhancedTable = ({rows}) => {
         setPage(0);
     };
 
-    //const handleChangeDense = event => {
-    //    setDense(event.target.checked);
-    //};
-
     const isSelected = tile => selected.indexOf(tile) !== -1;
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -255,7 +230,7 @@ const EnhancedTable = ({rows}) => {
     return (
         <div className={classes.root}>
             
-                <EnhancedTableToolbar numSelected={selected.length} />
+            <EnhancedTableToolbar numSelected={selected.length} />
                 <div className={classes.tableWrapper}>
                     <Table
                     className={classes.table}
@@ -272,7 +247,7 @@ const EnhancedTable = ({rows}) => {
                             onRequestSort={handleRequestSort}
                             rowCount={rows.length}
                         />
-                        <TableBody>
+                    <TableBody>
                             {stableSort(rows, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
@@ -295,20 +270,15 @@ const EnhancedTable = ({rows}) => {
                                                     inputProps={{ 'aria-labelledby': labelId }}
                                                 />
                                             </TableCell>
+                                            {/*Change value here row.owner by display JSON keys*/}
+             
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 {row.title}
                                             </TableCell>
+                                            {/*Change value here row.owner by display JSON keys*/}
                                             <TableCell align="left">{row.owner}</TableCell>
+                                            {/*Change value here row.owner by display JSON keys*/}
                                             <TableCell align="left">{row.active ? 'Yes': 'No'}</TableCell>
-                                            <TableCell align="left">
-                                                <IconButton aria-label="delete">
-                                                    <DeleteIcon fontSize="small" />
-                                                </IconButton>
-                                                <IconButton aria-label="edit">
-                                                    <EditIcon fontSize="small" />
-                                                </IconButton>
-                                            </TableCell>
-
                                         </TableRow>
                                     );
                                 })}

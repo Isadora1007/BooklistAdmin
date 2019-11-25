@@ -112,9 +112,9 @@ const PersistentDrawer = ()=> {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap>
+                  {/*<Typography variant="h6" noWrap>
             Book List 
-          </Typography>
+          </Typography>*/}
         </Toolbar>
       </AppBar>
       <Drawer
@@ -156,7 +156,7 @@ const PersistentDrawer = ()=> {
           [classes.contentShift]: open,
         })}
       >
-        <div className={classes.drawerHeader} />
+              <div className={classes.drawerHeader} />
               <Grid/>
       </main>
     </div>
