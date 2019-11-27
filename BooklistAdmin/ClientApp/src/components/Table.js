@@ -18,6 +18,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import Fab from '@material-ui/core/Fab';
+import { Link } from "react-router-dom";
 
 
 function desc(a, b, orderBy) {
@@ -135,7 +136,7 @@ const EnhancedTableToolbar = props => {
             }
             
             <Tooltip title="Add new book list">
-                <Fab color="secondary" aria-label="add" size="small">
+                <Fab color="secondary" aria-label="add" size="small" component={Link} to='new-book-list'>
                     <AddIcon />
                 </Fab>
             </Tooltip>

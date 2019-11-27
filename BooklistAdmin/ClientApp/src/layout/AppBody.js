@@ -7,6 +7,7 @@ import BookListLayout from '../pages/BookListLayout'
 import Collections from '../pages/Collections'
 import Displays from '../pages/Displays'
 import SignIn from '../pages/SignIn'
+import NewBookList from '../pages/NewBookList'
 
 
 const useStyles = makeStyles(theme => ({
@@ -22,11 +23,12 @@ const BodyGrid = () => {
         <div className={classes.root}>
             <Grid container spacing={3}>
                 <Switch>
-                    <Route exact path='/book-list' component={BookList} />
+                    <Route exact path='/' component={BookList} />
+                    <Route exact path='/new-book-list' component={NewBookList} />
                     <Route exact path='/book-list-layout' component={BookListLayout} />
                     <Route exact path='/collections' component={Collections} />
-                    <Route path='/displays' component={Displays} />
-                    <Route path='/sign-in' component={SignIn} />
+                    <Route exact path='/displays' component={Displays} />
+                    <Route exact path='/sign-in' component={SignIn} />
                 </Switch>
             </Grid>
         </div>

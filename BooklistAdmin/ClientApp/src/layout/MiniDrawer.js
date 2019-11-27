@@ -19,8 +19,9 @@ import LibraryBooks from '@material-ui/icons/LibraryBooks';
 import CastConnected from '@material-ui/icons/CastConnected';
 import Palette from '@material-ui/icons/Palette';
 import CollectionsBookmarkIcon from '@material-ui/icons/CollectionsBookmark';
-import Grid from './AppBody'
+import Grid from './AppBody';
 import { Link } from "react-router-dom";
+import Signin from '../components/SignIn'
 
 const drawerWidth = 240;
 
@@ -111,7 +112,8 @@ const PersistentDrawer = ()=> {
             className={clsx(classes.menuButton, open && classes.hide)}
           >
             <MenuIcon />
-          </IconButton>
+                  </IconButton>
+                  <Signin/>
                   {/*<Typography variant="h6" noWrap>
             Book List 
           </Typography>*/}
@@ -133,7 +135,7 @@ const PersistentDrawer = ()=> {
         </div>
         <Divider />
               <List>
-                  <ListItem button key={'Book list'} component={Link} to='/book-list'>
+                  <ListItem button key={'Book list'} component={Link} to='/'>
                       <ListItemIcon><LibraryBooks /></ListItemIcon>
                       <ListItemText primary={'Book list'} />
                   </ListItem>
