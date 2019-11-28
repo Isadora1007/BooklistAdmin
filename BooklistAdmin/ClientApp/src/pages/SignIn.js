@@ -16,16 +16,16 @@ const useStyles = makeStyles(theme => ({
 const SigIn = () => {
     const classes = useStyles()
 
-    const [formState, setFormState] = useState({ formInputs: { username: '', password: '' } });
+    const [formState, setFormState] = useState({ siginInputs: { username: '', password: '' } });
 
     const submitForm = (s) => {
 
-        const { formInputs } = s
+        const { siginInputs } = s
 
         //API call here
     }
     const handleChange = (e, name) => {
-        setFormState({ formInputs: { ...formState.formInputs, [name]: e.target.value } })
+        setFormState({ siginInputs: { ...formState.siginInputs, [name]: e.target.value } })
     }
     return (
         <Grid
@@ -44,12 +44,12 @@ const SigIn = () => {
                         fullWidth
                         margin="normal"
                         label="Username"
-                        value={formState.formInputs.Username}
+                        value={formState.siginInputs.username}
                         variant="outlined"
-                        onChange={e => handleChange(e, 'Username')}
+                        onChange={e => handleChange(e, 'username')}
                     />
                     <TextField fullWidth
-                        value={formState.formInputs.password}
+                        value={formState.siginInputs.password}
                         margin="normal"
                         label="Password"
                         variant="outlined"
