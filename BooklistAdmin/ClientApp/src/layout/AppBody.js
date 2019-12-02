@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import { Switch,Route } from "react-router-dom";
 import BookList from '../pages/BookList'
+import PrivateRoute from '../components/PrivateRoute'
 import BookListLayout from '../pages/BookListLayout'
 import Collections from '../pages/Collections'
 import Displays from '../pages/Displays'
@@ -23,11 +24,11 @@ const BodyGrid = () => {
         <div className={classes.root}>
             <Grid container spacing={3}>
                 <Switch>
-                    <Route exact path='/' component={BookList} />
-                    <Route exact path='/new-book-list' component={NewBookList} />
-                    <Route exact path='/book-list-layout' component={BookListLayout} />
-                    <Route exact path='/collections' component={Collections} />
-                    <Route exact path='/displays' component={Displays} />
+                    <PrivateRoute exact path='/' component={BookList} />
+                    <PrivateRoute exact path='/new-book-list' component={NewBookList} />
+                    <PrivateRoute exact path='/book-list-layout' component={BookListLayout} />
+                    <PrivateRoute exact path='/collections' component={Collections} />
+                    <PrivateRoute exact path='/displays' component={Displays} />
                     <Route exact path='/sign-in' component={SignIn} />
                 </Switch>
             </Grid>

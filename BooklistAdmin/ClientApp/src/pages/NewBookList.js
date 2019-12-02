@@ -1,4 +1,5 @@
-﻿import React, { Fragment, useEffect, useState } from 'react'
+﻿import React, { Fragment, useState } from 'react'
+import { useHistory } from "react-router-dom"
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
@@ -17,12 +18,14 @@ const useStyles = makeStyles(theme => ({
 const NewBookList = () => {
     const [formState, setFormState] = useState({ formInputs: { title: '', owner: '', description: '', bibliocommonslisturl:'' } });
     const classes = useStyles()
+    let history = useHistory()
 
     const submitForm = (s) => {
 
         const { formInputs } = s
 
         SetNewBookList(formInputs)
+        history.goBack()
     }
     const handleChange = (e, name) => {
       setFormState({ formInputs: { ...formState.formInputs, [name]: e.target.value } })
@@ -70,6 +73,9 @@ const NewBookList = () => {
                     </form>
                     <Button variant="contained" color="primary" disabled={false} onClick={() => { submitForm(formState)}}>
                         Create book list
+                    </Button>
+                    <Button variant="contained" onClick={() => { history.goBack() }}>
+                        Cancel
                     </Button>
                 </Paper>
             </Grid>

@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import Button from '@material-ui/core/Button'
 import { Link } from "react-router-dom";
-import getAuth from '../api/getAuth'
+//import getAuth from '../api/getAuth'
 
 const SignIn = () => {
     const Auth = async () => {

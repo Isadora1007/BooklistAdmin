@@ -16,17 +16,16 @@ const useStyles = makeStyles(theme => ({
 const SigIn = () => {
     const classes = useStyles()
 
-    const [formState, setFormState] = useState({ siginInputs: { username: '', password: '' } });
+    const [formState, setFormState] = useState({ submitted: false, siginInputs: { username: '', password: '' } });
 
-    const submitForm = (s) => {
-
-        const { siginInputs } = s
-
+    const handleSubmit = (s) => {
+        //const { siginInputs } = s
         //API call here
     }
     const handleChange = (e, name) => {
         setFormState({ siginInputs: { ...formState.siginInputs, [name]: e.target.value } })
     }
+
     return (
         <Grid
             container
@@ -61,7 +60,7 @@ const SigIn = () => {
                         color="primary"
                         disabled={false}
                         fullWidth
-                        onClick={() => { submitForm(formState) }}>
+                        onClick={() => { handleSubmit(formState) }}>
                     Sign in
                 </Button>
                 </Paper>

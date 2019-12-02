@@ -1,48 +1,46 @@
-﻿import React from 'react';
-import PropTypes from 'prop-types';
-import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
-import AddIcon from '@material-ui/icons/Add';
-import EditIcon from '@material-ui/icons/Edit';
-import Fab from '@material-ui/core/Fab';
-import { Link } from "react-router-dom";
+﻿import React from 'react'
+import PropTypes from 'prop-types'
+import { makeStyles } from '@material-ui/core/styles'
+import Table from '@material-ui/core/Table'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableHead from '@material-ui/core/TableHead'
+import TablePagination from '@material-ui/core/TablePagination'
+import TableRow from '@material-ui/core/TableRow'
+import TableSortLabel from '@material-ui/core/TableSortLabel'
+import Toolbar from '@material-ui/core/Toolbar'
+import Checkbox from '@material-ui/core/Checkbox'
+import IconButton from '@material-ui/core/IconButton'
+import Tooltip from '@material-ui/core/Tooltip'
+import DeleteIcon from '@material-ui/icons/Delete'
+import AddIcon from '@material-ui/icons/Add'
+import EditIcon from '@material-ui/icons/Edit'
+import Fab from '@material-ui/core/Fab'
+import { Link } from "react-router-dom"
 
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
-        return -1;
+        return -1
     }
     if (b[orderBy] > a[orderBy]) {
-        return 1;
+        return 1
     }
-    return 0;
+    return 0
 }
 
 function stableSort(array, cmp) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
+    const stabilizedThis = array.map((el, index) => [el, index])
     stabilizedThis.sort((a, b) => {
-        const order = cmp(a[0], b[0]);
-        if (order !== 0) return order;
-        return a[1] - b[1];
-    });
-    return stabilizedThis.map(el => el[0]);
+        const order = cmp(a[0], b[0])
+        if (order !== 0) return order
+        return a[1] - b[1]
+    })
+    return stabilizedThis.map(el => el[0])
 }
 
 function getSorting(order, orderBy) {
-    return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
+    return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy)
 }
 
 //Change table heading lables here
@@ -50,13 +48,13 @@ const headCells = [
     { id: 'title', disablePadding: true, label: 'Title' },
     { id: 'owner', disablePadding: false, label: 'Owner' },
     { id: 'active', disablePadding: false, label: 'In use' },   
-];
+]
 
 function EnhancedTableHead(props) {
-    const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+    const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props
     const createSortHandler = property => event => {
-        onRequestSort(event, property);
-    };
+        onRequestSort(event, property)
+    }
 
     return (
         <TableHead>
@@ -92,7 +90,7 @@ function EnhancedTableHead(props) {
                 ))}
             </TableRow>
         </TableHead>
-    );
+    )
 }
 
 EnhancedTableHead.propTypes = {
@@ -103,7 +101,7 @@ EnhancedTableHead.propTypes = {
     order: PropTypes.oneOf(['asc', 'desc']).isRequired,
     orderBy: PropTypes.string.isRequired,
     rowCount: PropTypes.number.isRequired,
-};
+}
 
 const useToolbarStyles = makeStyles(theme => ({
     root: {
@@ -113,11 +111,11 @@ const useToolbarStyles = makeStyles(theme => ({
     title: {
         flex: '1 1 100%',
     },
-}));
+}))
 
 const EnhancedTableToolbar = props => {
-    const classes = useToolbarStyles();
-    const { numSelected } = props;
+    const classes = useToolbarStyles()
+    const { numSelected } = props
     return (
         <Toolbar className={classes.root}>
             { numSelected === 1 ?
@@ -141,12 +139,12 @@ const EnhancedTableToolbar = props => {
                 </Fab>
             </Tooltip>
         </Toolbar>
-    );
-};
+    )
+}
 
 EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
-};
+}
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -170,63 +168,63 @@ const useStyles = makeStyles(theme => ({
         top: 20,
         width: 1,
     },
-}));
+}))
 
 const EnhancedTable = ({rows}) => {
-    const classes = useStyles();
-    const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('title');
-    const [selected, setSelected] = React.useState([]);
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const classes = useStyles()
+    const [order, setOrder] = React.useState('asc')
+    const [orderBy, setOrderBy] = React.useState('title')
+    const [selected, setSelected] = React.useState([])
+    const [page, setPage] = React.useState(0)
+    const [rowsPerPage, setRowsPerPage] = React.useState(10)
 
     const handleRequestSort = (event, property) => {
-        const isDesc = orderBy === property && order === 'desc';
-        setOrder(isDesc ? 'asc' : 'desc');
-        setOrderBy(property);
-    };
+        const isDesc = orderBy === property && order === 'desc'
+        setOrder(isDesc ? 'asc' : 'desc')
+        setOrderBy(property)
+    }
 
     const handleSelectAllClick = event => {
         if (event.target.checked) {
-            const newSelecteds = rows.map(n => n.title);
-            setSelected(newSelecteds);
-            return;
+            const newSelecteds = rows.map(n => n.title)
+            setSelected(newSelecteds)
+            return
         }
-        setSelected([]);
-    };
+        setSelected([])
+    }
 
     const handleClick = (event, title) => {
-        const selectedIndex = selected.indexOf(title);
-        let newSelected = [];
+        const selectedIndex = selected.indexOf(title)
+        let newSelected = []
 
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, title);
+            newSelected = newSelected.concat(selected, title)
         } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
+            newSelected = newSelected.concat(selected.slice(1))
         } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
+            newSelected = newSelected.concat(selected.slice(0, -1))
         } else if (selectedIndex > 0) {
             newSelected = newSelected.concat(
                 selected.slice(0, selectedIndex),
                 selected.slice(selectedIndex + 1),
-            );
+            )
         }
 
-        setSelected(newSelected);
-    };
+        setSelected(newSelected)
+    }
 
     const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
+        setPage(newPage)
+    }
 
     const handleChangeRowsPerPage = event => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
+        setRowsPerPage(parseInt(event.target.value, 10))
+        setPage(0)
+    }
 
-    const isSelected = tile => selected.indexOf(tile) !== -1;
+    const isSelected = tile => selected.indexOf(tile) !== -1
 
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage)
 
     return (
         <div className={classes.root}>
@@ -252,8 +250,8 @@ const EnhancedTable = ({rows}) => {
                             {stableSort(rows, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
-                                    const isItemSelected = isSelected(row.title);
-                                    const labelId = `enhanced-table-checkbox-${index}`;
+                                    const isItemSelected = isSelected(row.title)
+                                    const labelId = `enhanced-table-checkbox-${index}`
 
                                     return (
                                         <TableRow
@@ -281,7 +279,7 @@ const EnhancedTable = ({rows}) => {
                                             {/*Change value here row.owner by display JSON keys*/}
                                             <TableCell align="left">{row.active ? 'Yes': 'No'}</TableCell>
                                         </TableRow>
-                                    );
+                                    )
                                 })}
                             {emptyRows > 0 && (
                                 <TableRow style={{ height: 33 * emptyRows }}>
@@ -307,7 +305,7 @@ const EnhancedTable = ({rows}) => {
                     onChangeRowsPerPage={handleChangeRowsPerPage}
                 />
         </div>
-    );
+    )
 }
 
 export default EnhancedTable
