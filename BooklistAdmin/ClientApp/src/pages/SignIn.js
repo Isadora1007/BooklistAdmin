@@ -1,10 +1,12 @@
-﻿import React, { useState } from 'react'
+﻿import React, { useState, useContext } from 'react'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
+import getAuth from '../api/getAuth'
+import { Ctx } from '../Context'
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -15,12 +17,23 @@ const useStyles = makeStyles(theme => ({
 
 const SigIn = () => {
     const classes = useStyles()
+    const { setGobalValue } = useContext(Ctx)
 
     const [formState, setFormState] = useState({ submitted: false, siginInputs: { username: '', password: '' } });
 
-    const handleSubmit = (s) => {
-        //const { siginInputs } = s
-        //API call here
+    const handleSubmit = async(s) => {
+        const { siginInputs } = s
+        const isAuth = await getAuth(`${siginInputs.username}:${siginInputs.password}`)
+
+        if (isAuth.authenticated) {
+            localStorage.setItem('JWT', isAuth.authenticateToken);
+            setGobalValue('userData', isAuth)
+            setGobalValue('isAuth', isAuth.authenticated)
+        } else {
+            console.log(`isAuth ${isAuth.authenticated}`, 'error here')
+            //throw error
+        }
+
     }
     const handleChange = (e, name) => {
         setFormState({ siginInputs: { ...formState.siginInputs, [name]: e.target.value } })
@@ -48,9 +61,11 @@ const SigIn = () => {
                         onChange={e => handleChange(e, 'username')}
                     />
                     <TextField fullWidth
+                        required
                         value={formState.siginInputs.password}
                         margin="normal"
                         label="Password"
+                        type="password"
                         variant="outlined"
                         onChange={e => handleChange(e, 'password')}
                     />

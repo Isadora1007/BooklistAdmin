@@ -1,22 +1,18 @@
-﻿import React from 'react';
+﻿import React from 'react'
 import Button from '@material-ui/core/Button'
 import { Link } from "react-router-dom"
 
-const SignIn = () => {
-    const Auth = async () => {
-        console.log('Auth')
-    }
+const SignInBtn = () => {
 
     return (
         <Button
             variant="contained"
             color="primary"
-            disabled={false}
-            onClick={() => { Auth() }}
+            //disabled={false}
             component={Link} to='sign-in'>
             Sign-in
         </Button>
     )
 }
 
-export default SignIn;
+export default SignInBtn

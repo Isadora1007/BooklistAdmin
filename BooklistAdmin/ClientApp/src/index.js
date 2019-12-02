@@ -1,12 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core'
-import App from './App';
+import App from './App'
 import { createProvider } from './Context'
 
 //Setting application initial States 
 const AppProvider = createProvider({
-    isAuth: true,
+    isAuth: false,
+    userData: {
+        authenticateToken: null,
+        authenticated: false,   
+        displayName: "",    
+        message: null,  
+        password: null, 
+        userName: "",   
+    },
     feedBack: {
         snackBar: {
             isOpen:false
