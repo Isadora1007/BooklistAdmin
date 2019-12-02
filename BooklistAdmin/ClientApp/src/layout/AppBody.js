@@ -9,6 +9,7 @@ import Collections from '../pages/Collections'
 import Displays from '../pages/Displays'
 import SignIn from '../pages/SignIn'
 import NewBookList from '../pages/NewBookList'
+import PageNotFound from '../pages/PageNotFound';
 
 
 const useStyles = makeStyles(theme => ({
@@ -29,7 +30,9 @@ const BodyGrid = () => {
                     <PrivateRoute exact path='/book-list-layout' component={BookListLayout} />
                     <PrivateRoute exact path='/collections' component={Collections} />
                     <PrivateRoute exact path='/displays' component={Displays} />
-                    <Route exact path='/sign-in' component={SignIn} />
+                    <Route exact path='/sign-in' component={SignIn} /><Route path="*">
+                        <PageNotFound />
+                    </Route>
                 </Switch>
             </Grid>
         </div>
