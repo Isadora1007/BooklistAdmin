@@ -9,6 +9,7 @@ import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import getAuth from '../api/getAuth'
 import { Ctx } from '../Context'
+import { Redirect } from 'react-router-dom'
 
 
 
@@ -21,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 
 const SigIn = () => {
     const classes = useStyles()
-    const { setGobalValue } = useContext(Ctx)
+    const { setGobalValue, state } = useContext(Ctx)
 
     const [formState, setFormState] = useState({ submitted: false, hasError: false, siginInputs: { username: '', password: '' }});
 
@@ -41,8 +42,14 @@ const SigIn = () => {
         }
 
     }
+
     const handleChange = (e, name) => {
         setFormState({ ...formState,siginInputs: { ...formState.siginInputs, [name]: e.target.value } })
+    }
+
+    //Checks for authorization value. if true redirects user to home page  
+    if (state.isAuth) {
+        return <Redirect to="/" />;
     }
 
     return (

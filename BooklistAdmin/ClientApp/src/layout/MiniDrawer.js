@@ -87,7 +87,6 @@ const PersistentDrawer = () => {
     const classes = useStyles()
     const theme = useTheme()
     const { state } = useContext(Ctx)
-    console.log(state.isAuth)
     const [open, setOpen] = React.useState(false)
 
     const handleDrawerOpen = () => {

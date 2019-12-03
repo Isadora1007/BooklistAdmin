@@ -16,6 +16,7 @@ const SignOutBtn = () => {
     const signOut = () => {
         localStorage.clear()
         setGobalValue('userData', celarUserData)
+        setGobalValue('isAuth', false)
     }
 
     return (
