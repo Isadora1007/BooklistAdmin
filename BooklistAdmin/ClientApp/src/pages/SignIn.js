@@ -40,7 +40,6 @@ const SigIn = () => {
             setFormState({ ...formState, hasError: true, submitted: true})
             console.log(`isAuth ${isAuth.authenticated}`, 'error here')
         }
-
     }
 
     const handleChange = (e, name) => {

@@ -6,7 +6,7 @@ import { createProvider } from './Context'
 
 //Setting application initial States 
 const AppProvider = createProvider({
-    isAuth: false,
+    isAuth: true,
     userData: {
         authenticateToken: null,
         authenticated: false,   
@@ -24,6 +24,10 @@ const AppProvider = createProvider({
         tableName: '',
         rowsSelected: []
     },
+    bookLists: null,
+    displays: {},
+    booklistLayaout: {},
+    collections: {},
 })
 
 //Modify m-ui theme color palette

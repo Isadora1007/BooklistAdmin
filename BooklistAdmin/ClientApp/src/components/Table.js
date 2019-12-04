@@ -1,4 +1,4 @@
-﻿import React from 'react'
+﻿import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table'
@@ -16,7 +16,8 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import AddIcon from '@material-ui/icons/Add'
 import EditIcon from '@material-ui/icons/Edit'
 import Fab from '@material-ui/core/Fab'
-import { Link } from "react-router-dom"
+import { Link } from 'react-router-dom'
+import { Ctx } from '../Context'
 
 
 function desc(a, b, orderBy) {
@@ -43,11 +44,11 @@ function getSorting(order, orderBy) {
     return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy)
 }
 
-//Change table heading lables here
 const headCells = [
-    { id: 'title', disablePadding: true, label: 'Title' },
-    { id: 'owner', disablePadding: false, label: 'Owner' },
-    { id: 'active', disablePadding: false, label: 'In use' },   
+    { id: 'booklistId', numeric: true,  disablePadding: false, label: 'Book list id' },  
+    { id: 'title', numeric: false, disablePadding: true, label: 'Title' },
+    { id: 'owner', numeric: false, disablePadding: false, label: 'Owner' },
+    { id: 'active', numeric: false, disablePadding: false, label: 'In use' }, 
 ]
 
 function EnhancedTableHead(props) {
@@ -115,18 +116,28 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbar = props => {
     const classes = useToolbarStyles()
-    const { numSelected } = props
+    const { totalRowsSelected } = props
+
+
+    const onSelectEdit = (id) => {
+        console.log('epa onSelectEdit')
+    }
+
+    const onSelectDelete = (ids) => {
+        console.log('epa onSelectDelete')
+    }
+
     return (
         <Toolbar className={classes.root}>
-            { numSelected === 1 ?
+            {totalRowsSelected === 1 ?
                 <Tooltip title="Edit selected book list">
-                    <IconButton aria-label="Edit selected book list">
+                    <IconButton aria-label="Edit selected book list" onClick={() => { onSelectEdit() }}>
                         <EditIcon />
                     </IconButton>
                 </Tooltip> : null
             }
-            { numSelected > 0 ?
-                <Tooltip title="Delete selected book list">
+            {totalRowsSelected > 0 ?
+                <Tooltip title="Delete selected book list" onClick={() => { onSelectDelete() }}>
                     <IconButton aria-label="Delete selected book list">
                         <DeleteIcon />
                     </IconButton>
@@ -143,7 +154,7 @@ const EnhancedTableToolbar = props => {
 }
 
 EnhancedTableToolbar.propTypes = {
-    numSelected: PropTypes.number.isRequired,
+    totalRowsSelected: PropTypes.number.isRequired,
 }
 
 const useStyles = makeStyles(theme => ({
@@ -170,10 +181,12 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-const EnhancedTable = ({rows}) => {
+const EnhancedTable = ({ rows }) => {
+
+    const { setGobalValue, state } = useContext(Ctx)
     const classes = useStyles()
     const [order, setOrder] = React.useState('asc')
-    const [orderBy, setOrderBy] = React.useState('title')
+    const [orderBy, setOrderBy] = React.useState('booklistId')
     const [selected, setSelected] = React.useState([])
     const [page, setPage] = React.useState(0)
     const [rowsPerPage, setRowsPerPage] = React.useState(10)
@@ -185,15 +198,20 @@ const EnhancedTable = ({rows}) => {
     }
 
     const handleSelectAllClick = event => {
+        const { table } = state
+
         if (event.target.checked) {
             const newSelecteds = rows.map(n => n.title)
             setSelected(newSelecteds)
+            setGobalValue('rowsSelected', newSelecteds)
             return
         }
+        setGobalValue('rowsSelected', [])
         setSelected([])
     }
 
     const handleClick = (event, title) => {
+        console.log(title)
         const selectedIndex = selected.indexOf(title)
         let newSelected = []
 
@@ -229,7 +247,7 @@ const EnhancedTable = ({rows}) => {
     return (
         <div className={classes.root}>
             
-            <EnhancedTableToolbar numSelected={selected.length} />
+            <EnhancedTableToolbar totalRowsSelected={selected.length} />
                 <div className={classes.tableWrapper}>
                     <Table
                     className={classes.table}
@@ -249,16 +267,13 @@ const EnhancedTable = ({rows}) => {
                     <TableBody>
                             {stableSort(rows, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row, index) => {
-                                    const isItemSelected = isSelected(row.title)
-                                    const labelId = `enhanced-table-checkbox-${index}`
-
+                                .map( row => {
+                                    const isItemSelected = isSelected(row.booklistId)
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={event => handleClick(event, row.title)}
+                                            onClick={event => handleClick(event, row.booklistId)}
                                             role="checkbox"
-                                            aria-checked={isItemSelected}
                                             tabIndex={-1}
                                             key={row.booklistId}
                                             selected={isItemSelected}
@@ -266,17 +281,15 @@ const EnhancedTable = ({rows}) => {
                                             <TableCell padding="checkbox">
                                                 <Checkbox
                                                     checked={isItemSelected}
-                                                    inputProps={{ 'aria-labelledby': labelId }}
-                                                />
+                                            />
                                             </TableCell>
-                                            {/*Change value here row.owner by display JSON keys*/}
-             
-                                            <TableCell component="th" id={labelId} scope="row" padding="none">
+                                            <TableCell>
+                                                {row.booklistId}
+                                            </TableCell>
+                                            <TableCell padding='none'>
                                                 {row.title}
                                             </TableCell>
-                                            {/*Change value here row.owner by display JSON keys*/}
                                             <TableCell align="left">{row.owner}</TableCell>
-                                            {/*Change value here row.owner by display JSON keys*/}
                                             <TableCell align="left">{row.active ? 'Yes': 'No'}</TableCell>
                                         </TableRow>
                                     )
