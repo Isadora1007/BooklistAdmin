@@ -1,14 +1,16 @@
-﻿const getBookList = async () => {
+﻿const getBookList = async (id) => {
+    const apiUrl = id ? `./api/booklists/${id}` : './api/booklists'
 
-    var requestOptions = {
+
+    const requestOptions = {
         method: 'GET',
         redirect: 'follow'
     };
 
-    const requestData = await fetch(`./api/booklists`, requestOptions)
-    const response = await requestData.text();
-    const data = JSON.parse(response);
+    const requestData = await fetch(apiUrl, requestOptions)
+    const response = await requestData.text()
+    const data = JSON.parse(response)
     return data
 }
 
-export default getBookList;
+export default getBookList

@@ -6,7 +6,9 @@ import { createProvider } from './Context'
 
 //Setting application initial States 
 const AppProvider = createProvider({
-    isAuth: true,
+    isAuth: false,
+    editMode: false,
+    page: 0,
     userData: {
         authenticateToken: null,
         authenticated: false,   
@@ -15,15 +17,7 @@ const AppProvider = createProvider({
         password: null, 
         userName: "",   
     },
-    feedBack: {
-        snackBar: {
-            isOpen:false
-        }
-    },
-    table: {
-        tableName: '',
-        rowsSelected: []
-    },
+    rowsSelected: [],
     bookLists: null,
     displays: {},
     booklistLayaout: {},

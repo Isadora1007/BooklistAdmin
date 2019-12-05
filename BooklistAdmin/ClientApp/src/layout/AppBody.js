@@ -8,8 +8,8 @@ import BookListLayout from '../pages/BookListLayout'
 import Collections from '../pages/Collections'
 import Displays from '../pages/Displays'
 import SignIn from '../pages/SignIn'
-import NewBookList from '../pages/NewBookList'
-import PageNotFound from '../pages/PageNotFound';
+import BookListForm from '../pages/BookListForm'
+import PageNotFound from '../pages/PageNotFound'
 
 
 const useStyles = makeStyles(theme => ({
@@ -26,7 +26,7 @@ const BodyGrid = () => {
             <Grid container spacing={3}>
                 <Switch>
                     <PrivateRoute exact path='/' component={BookList} />
-                    <PrivateRoute exact path='/new-book-list' component={NewBookList} />
+                    <PrivateRoute exact path='/new-book-list' component={BookListForm} />
                     <PrivateRoute exact path='/book-list-layout' component={BookListLayout} />
                     <PrivateRoute exact path='/collections' component={Collections} />
                     <PrivateRoute exact path='/displays' component={Displays} />

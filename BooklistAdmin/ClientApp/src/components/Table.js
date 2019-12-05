@@ -1,4 +1,4 @@
-﻿import React, { useContext } from 'react'
+﻿import React, { useContext, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table'
@@ -16,9 +16,8 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import AddIcon from '@material-ui/icons/Add'
 import EditIcon from '@material-ui/icons/Edit'
 import Fab from '@material-ui/core/Fab'
-import { Link } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { Ctx } from '../Context'
-
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -45,10 +44,10 @@ function getSorting(order, orderBy) {
 }
 
 const headCells = [
-    { id: 'booklistId', numeric: true,  disablePadding: false, label: 'Book list id' },  
+    { id: 'booklistId', numeric: true, disablePadding: false, label: 'Book list id', style:{ display: 'none' } },
     { id: 'title', numeric: false, disablePadding: true, label: 'Title' },
     { id: 'owner', numeric: false, disablePadding: false, label: 'Owner' },
-    { id: 'active', numeric: false, disablePadding: false, label: 'In use' }, 
+    { id: 'active', numeric: false, disablePadding: false, label: 'In use' },
 ]
 
 function EnhancedTableHead(props) {
@@ -73,12 +72,13 @@ function EnhancedTableHead(props) {
                         key={headCell.id}
                         padding={headCell.disablePadding ? 'none' : 'default'}
                         sortDirection={orderBy === headCell.id ? order : false}
+                        style={headCell.style}
                     >
                         <TableSortLabel
                             active={orderBy === headCell.id}
                             direction={order}
                             onClick={createSortHandler(headCell.id)}
-                            
+
                         >
                             {headCell.label}
                             {orderBy === headCell.id ? (
@@ -116,16 +116,7 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbar = props => {
     const classes = useToolbarStyles()
-    const { totalRowsSelected } = props
-
-
-    const onSelectEdit = (id) => {
-        console.log('epa onSelectEdit')
-    }
-
-    const onSelectDelete = (ids) => {
-        console.log('epa onSelectDelete')
-    }
+    const { totalRowsSelected, onSelectEdit, onSelectDelete, onSelectAdd } = props
 
     return (
         <Toolbar className={classes.root}>
@@ -143,9 +134,9 @@ const EnhancedTableToolbar = props => {
                     </IconButton>
                 </Tooltip> : null
             }
-            
+
             <Tooltip title="Add new book list">
-                <Fab color="secondary" aria-label="add" size="small" component={Link} to='new-book-list'>
+                <Fab color="secondary" aria-label="add" size="small" onClick={() => { onSelectAdd() }}>
                     <AddIcon />
                 </Fab>
             </Tooltip>
@@ -182,13 +173,12 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const EnhancedTable = ({ rows }) => {
-
+    let history = useHistory();
     const { setGobalValue, state } = useContext(Ctx)
     const classes = useStyles()
     const [order, setOrder] = React.useState('asc')
     const [orderBy, setOrderBy] = React.useState('booklistId')
-    const [selected, setSelected] = React.useState([])
-    const [page, setPage] = React.useState(0)
+    //const [page, setPage] = React.useState(0)
     const [rowsPerPage, setRowsPerPage] = React.useState(10)
 
     const handleRequestSort = (event, property) => {
@@ -198,126 +188,158 @@ const EnhancedTable = ({ rows }) => {
     }
 
     const handleSelectAllClick = event => {
-        const { table } = state
 
         if (event.target.checked) {
-            const newSelecteds = rows.map(n => n.title)
-            setSelected(newSelecteds)
+            const newSelecteds = rows.map(n => n.booklistId)
             setGobalValue('rowsSelected', newSelecteds)
             return
         }
         setGobalValue('rowsSelected', [])
-        setSelected([])
     }
 
-    const handleClick = (event, title) => {
-        console.log(title)
-        const selectedIndex = selected.indexOf(title)
+    const handleClick = (event, id) => {
+        const selectedIndex = state.rowsSelected.indexOf(id)
         let newSelected = []
 
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, title)
+            newSelected = newSelected.concat(state.rowsSelected, id)
         } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1))
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1))
+            newSelected = newSelected.concat(state.rowsSelected.slice(1))
+        } else if (selectedIndex === state.rowsSelected.length - 1) {
+            newSelected = newSelected.concat(state.rowsSelected.slice(0, -1))
         } else if (selectedIndex > 0) {
             newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
+                state.rowsSelected.slice(0, selectedIndex),
+                state.rowsSelected.slice(selectedIndex + 1),
             )
         }
-
-        setSelected(newSelected)
+        setGobalValue('rowsSelected', newSelected)
     }
 
     const handleChangePage = (event, newPage) => {
-        setPage(newPage)
+        setGobalValue('page', newPage)
     }
 
     const handleChangeRowsPerPage = event => {
         setRowsPerPage(parseInt(event.target.value, 10))
-        setPage(0)
+        setGobalValue('page', 0)
     }
 
-    const isSelected = tile => selected.indexOf(tile) !== -1
+    const isSelected = tile => state.rowsSelected.indexOf(tile) !== -1
 
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage)
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - state.page * rowsPerPage)
+
+    const onSelectEdit = () => {
+        const { rowsSelected } = state
+        history.push({
+            pathname: '/new-book-list',
+            state: {
+                bookListId: rowsSelected,
+                editMode: true
+            }
+        })
+        setGobalValue('editMode', true)
+    }
+
+    const onSelectDelete = () => {
+        const { rowsSelected, bookLists } = state
+        
+        if (window.confirm('Are you sure')) {
+            const newBookList = bookLists.filter(list => {
+                return list.booklistId !== rowsSelected[0]
+            })
+            setGobalValue('bookLists', newBookList)
+            setGobalValue('rowsSelected', [])
+        }  
+    }
+
+    const onSelectAdd = () => {
+        history.push({
+            pathname: '/new-book-list',
+            state: {
+                editMode: false
+            }
+        })
+    }
 
     return (
-        <div className={classes.root}>
-            
-            <EnhancedTableToolbar totalRowsSelected={selected.length} />
-                <div className={classes.tableWrapper}>
-                    <Table
+        <Fragment>
+            <EnhancedTableToolbar
+                totalRowsSelected={state.rowsSelected.length}
+                onSelectEdit={onSelectEdit}
+                onSelectDelete={onSelectDelete}
+                onSelectAdd={onSelectAdd}
+            />
+            <div className={classes.tableWrapper}>
+                <Table
                     className={classes.table}
                     aria-labelledby="tableTitle"
                     size='small'
                     aria-label="enhanced table"
-                    >
-                        <EnhancedTableHead
-                            classes={classes}
-                            numSelected={selected.length}
-                            order={order}
-                            orderBy={orderBy}
-                            onSelectAllClick={handleSelectAllClick}
-                            onRequestSort={handleRequestSort}
-                            rowCount={rows.length}
-                        />
+                >
+                    <EnhancedTableHead
+                        classes={classes}
+                        numSelected={state.rowsSelected.length}
+                        order={order}
+                        orderBy={orderBy}
+                        onSelectAllClick={handleSelectAllClick}
+                        onRequestSort={handleRequestSort}
+                        rowCount={rows.length}
+                    />
                     <TableBody>
-                            {stableSort(rows, getSorting(order, orderBy))
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map( row => {
-                                    const isItemSelected = isSelected(row.booklistId)
-                                    return (
-                                        <TableRow
-                                            hover
-                                            onClick={event => handleClick(event, row.booklistId)}
-                                            role="checkbox"
-                                            tabIndex={-1}
-                                            key={row.booklistId}
-                                            selected={isItemSelected}
-                                        >
-                                            <TableCell padding="checkbox">
-                                                <Checkbox
-                                                    checked={isItemSelected}
+                        {stableSort(rows, getSorting(order, orderBy))
+                            .slice(state.page * rowsPerPage, state.page * rowsPerPage + rowsPerPage)
+                            .map(row => {
+                                const isItemSelected = isSelected(row.booklistId)
+                                return (
+                                    <TableRow
+                                        hover
+                                        onClick={event => handleClick(event, row.booklistId)}
+                                        role="checkbox"
+                                        tabIndex={-1}
+                                        key={row.booklistId}
+                                        selected={isItemSelected}
+                                    >
+                                        <TableCell padding="checkbox">
+                                            <Checkbox
+                                                checked={isItemSelected}
                                             />
-                                            </TableCell>
-                                            <TableCell>
-                                                {row.booklistId}
-                                            </TableCell>
-                                            <TableCell padding='none'>
-                                                {row.title}
-                                            </TableCell>
-                                            <TableCell align="left">{row.owner}</TableCell>
-                                            <TableCell align="left">{row.active ? 'Yes': 'No'}</TableCell>
-                                        </TableRow>
-                                    )
-                                })}
-                            {emptyRows > 0 && (
-                                <TableRow style={{ height: 33 * emptyRows }}>
-                                    <TableCell colSpan={6} />
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
-                <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    backIconButtonProps={{
-                        'aria-label': 'previous page',
-                    }}
-                    nextIconButtonProps={{
-                        'aria-label': 'next page',
-                    }}
-                    onChangePage={handleChangePage}
-                    onChangeRowsPerPage={handleChangeRowsPerPage}
-                />
-        </div>
+                                        </TableCell>
+                                        <TableCell style={{display: 'none'}}>
+                                            {row.booklistId}
+                                        </TableCell>
+                                        <TableCell padding='none'>
+                                            {row.title}
+                                        </TableCell>
+                                        <TableCell align="left">{row.owner}</TableCell>
+                                        <TableCell align="left">{row.active ? 'Yes' : 'No'}</TableCell>
+                                    </TableRow>
+                                )
+                            })}
+                        {emptyRows > 0 && (
+                            <TableRow style={{ height: 33 * emptyRows }}>
+                                <TableCell colSpan={6} />
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </div>
+            <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={rows.length}
+                rowsPerPage={rowsPerPage}
+                page={state.page}
+                backIconButtonProps={{
+                    'aria-label': 'previous page',
+                }}
+                nextIconButtonProps={{
+                    'aria-label': 'next page',
+                }}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+            />
+        </Fragment>
     )
 }
 

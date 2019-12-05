@@ -1,5 +1,5 @@
-﻿import React, { Fragment, useState } from 'react'
-import { useHistory } from "react-router-dom"
+﻿import React, { Fragment, useState, useEffect, useContext } from 'react'
+import { useHistory } from 'react-router-dom'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
@@ -7,29 +7,65 @@ import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import SetNewBookList from '../api/SetNewBookList'
+import getBookList from '../api/getBookList'
+import editBookList from '../api/editBookList'
+import { Ctx } from '../Context'
 
 const useStyles = makeStyles(theme => ({
     paper: {
         padding: theme.spacing(2),
         color: theme.palette.text.secondary,
     },
-}));
+}))
 
-const NewBookList = () => {
-    const [formState, setFormState] = useState({ formInputs: { title: '', owner: '', description: '', bibliocommonslisturl:'' } });
+const BookListForm = (props) => {
+    const bookListId = !props.location.state.bookListId ? '' : props.location.state.bookListId
+    const { state, setGobalValue } = useContext(Ctx)
     const classes = useStyles()
     let history = useHistory()
+    
+    const [formState, setFormState] = useState({
+        formInputs: {
+            title: '',
+            owner: '',
+            description: '',
+            bibliocommonslisturl: ''
+        }
+   })
 
-    const submitForm = (s) => {
+    useEffect(() => {
+        const fetchBookLists = async () => {
+            const resposne = await getBookList(bookListId)
+            setFormState({ ...formState, formInputs: resposne })
+        }
+        if (state.editMode) {
+            fetchBookLists()   
+        }
+        
+    }, [])
 
-        const { formInputs } = s
-
-        SetNewBookList(formInputs)
-        history.goBack()
-    }
     const handleChange = (e, name) => {
       setFormState({ formInputs: { ...formState.formInputs, [name]: e.target.value } })
     }
+
+    const submitForm = () => {
+        const { formInputs } = formState
+        if (state.editMode) {
+            editBookList(bookListId, JSON.stringify(formInputs))
+            setGobalValue('editMode', false)
+        } else {
+            SetNewBookList(formInputs)
+        }
+        history.goBack()
+    }
+
+    const handleCancel = () => {
+        setGobalValue('editMode', false)
+        history.goBack()
+    }
+
+    //CTA stands for call to action
+    let cta = state.editMode ? 'Edit book list' : 'Create book list'
 
     return (
         <Fragment>
@@ -71,10 +107,10 @@ const NewBookList = () => {
                             onChange={e => handleChange(e, 'owner')}
                         />
                     </form>
-                    <Button variant="contained" color="primary" disabled={false} onClick={() => { submitForm(formState)}}>
-                        Create book list
+                    <Button variant="contained" color="primary" disabled={false} onClick={() => { submitForm()}}>
+                        { cta }
                     </Button>
-                    <Button variant="contained" onClick={() => { history.goBack() }}>
+                    <Button variant="contained" onClick={() => { handleCancel() }}>
                         Cancel
                     </Button>
                 </Paper>
@@ -83,4 +119,4 @@ const NewBookList = () => {
     );
 }
 
-export default NewBookList
+export default BookListForm
