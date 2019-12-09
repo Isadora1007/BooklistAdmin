@@ -11,7 +11,7 @@ const AppProvider = createProvider({
     page: 0,
     userData: {
         authenticateToken: null,
-        authenticated: false,   
+        authenticated: true,   
         displayName: "",    
         message: null,  
         password: null, 

@@ -1,26 +1,25 @@
-// JavaScript source code
-import React from 'react';
-import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
-import AddIcon from '@material-ui/icons/Add';
-import EditIcon from '@material-ui/icons/Edit';
-import Fab from '@material-ui/core/Fab';
-import { Link } from "react-router-dom";
+import React, { useContext, Fragment } from 'react'
+import PropTypes from 'prop-types'
+import { makeStyles } from '@material-ui/core/styles'
+import Table from '@material-ui/core/Table'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableHead from '@material-ui/core/TableHead'
+import TablePagination from '@material-ui/core/TablePagination'
+import TableRow from '@material-ui/core/TableRow'
+import TableSortLabel from '@material-ui/core/TableSortLabel'
+import Toolbar from '@material-ui/core/Toolbar'
+import Checkbox from '@material-ui/core/Checkbox'
+import IconButton from '@material-ui/core/IconButton'
+import Tooltip from '@material-ui/core/Tooltip'
+import DeleteIcon from '@material-ui/icons/Delete'
+import AddIcon from '@material-ui/icons/Add'
+import EditIcon from '@material-ui/icons/Edit'
+import Fab from '@material-ui/core/Fab'
+import { useHistory } from 'react-router-dom'
+import { Ctx } from '../Context'
 
 //text here
-
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
         return -1;
@@ -47,10 +46,10 @@ function getSorting(order, orderBy) {
 
 //Change table heading lables here
 const headCells = [
-    { id: 'name', disablePadding: true, label: 'Name' },
-    { id: 'branch', disablePadding: false, label: 'Branch' },
-    { id: 'in use', disablePadding: false, label: 'In use' },
-    { id: 'layout', disablePadding: false, label: 'Layout' },
+    { id: 'booklistId', numeric: true, disablePadding: false, label: 'Book list id', style: { display: 'none' } },
+    { id: 'title', numeric: false, disablePadding: true, label: 'Title' },
+    { id: 'owner', numeric: false, disablePadding: false, label: 'Owner' },
+    { id: 'active', numeric: false, disablePadding: false, label: 'In use' },
 ];
 
 function EnhancedTableHead(props) {
@@ -75,6 +74,7 @@ function EnhancedTableHead(props) {
                         key={headCell.id}
                         padding={headCell.disablePadding ? 'none' : 'default'}
                         sortDirection={orderBy === headCell.id ? order : false}
+                        style={headCell.style}
                     >
                         <TableSortLabel
                             active={orderBy === headCell.id}
@@ -118,18 +118,19 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbar = props => {
     const classes = useToolbarStyles();
-    const { numSelected } = props;
+    const { totalRowsSelected, onSelectEdit, onSelectDelete, onSelectAdd } = props;
+
     return (
         <Toolbar className={classes.root}>
-            {numSelected === 1 ?
+            {totalRowsSelected === 1 ?
                 <Tooltip title="Edit selected book list">
-                    <IconButton aria-label="Edit selected book list">
+                    <IconButton aria-label="Edit selected book list" onClick={() => { onSelectEdit() }}>
                         <EditIcon />
                     </IconButton>
                 </Tooltip> : null
             }
-            {numSelected > 0 ?
-                <Tooltip title="Delete selected book list">
+            {totalRowsSelected > 0 ?
+                <Tooltip title="Delete selected book list" onClick={() => { onSelectDelete() }}>
                     <IconButton aria-label="Delete selected book list">
                         <DeleteIcon />
                     </IconButton>
@@ -137,7 +138,7 @@ const EnhancedTableToolbar = props => {
             }
 
             <Tooltip title="Add new book list">
-                <Fab color="secondary" aria-label="add" size="small" component={Link} to='new-book-list'>
+                <Fab color="secondary" aria-label="add" size="small" onClick={() => { onSelectAdd() }}>
                     <AddIcon />
                 </Fab>
             </Tooltip>
@@ -146,12 +147,13 @@ const EnhancedTableToolbar = props => {
 };
 
 EnhancedTableToolbar.propTypes = {
-    numSelected: PropTypes.number.isRequired,
+    totalRowsSelected: PropTypes.number.isRequired,
 };
 
 const useStyles = makeStyles(theme => ({
     root: {
         width: '100%',
+        //marginTop: theme.spacing(3),
     },
     table: {
         minWidth: 750,
@@ -173,11 +175,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const EnhancedTable = ({ rows }) => {
+    let history = useHistory();
+    const { setGobalValue, state } = useContext(Ctx)
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('name');
-    const [selected, setSelected] = React.useState([]);
-    const [page, setPage] = React.useState(0);
+    const [orderBy, setOrderBy] = React.useState('booklistId');
+    //const [selected, setSelected] = React.useState([]);
+   // const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
     const handleRequestSort = (event, property) => {
@@ -188,50 +192,88 @@ const EnhancedTable = ({ rows }) => {
 
     const handleSelectAllClick = event => {
         if (event.target.checked) {
-            const newSelecteds = rows.map(n => n.name);
-            setSelected(newSelecteds);
+            const newSelecteds = rows.map(n => n.booklistId);
+            setGobalValue('rowsSelected', newSelecteds)
             return;
         }
-        setSelected([]);
+        setGobalValue('rowsSelected', [])
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
+    const handleClick = (event, id) => {
+        const selectedIndex = state.rowsSelected.indexOf(id)
+        let newSelected = []
 
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
+            newSelected = newSelected.concat(state.rowsSelected, id)
         } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
+            newSelected = newSelected.concat(state.rowsSelected.slice(1))
+        } else if (selectedIndex === state.rowsSelected.length - 1) {
+            newSelected = newSelected.concat(state.rowsSelected.slice(0, -1))
         } else if (selectedIndex > 0) {
             newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
+                state.rowsSelected.slice(0, selectedIndex),
+                state.rowsSelected.slice(selectedIndex + 1),
             );
         }
-
-        setSelected(newSelected);
+        setGobalValue('rowsSelected', newSelected)
     };
 
     const handleChangePage = (event, newPage) => {
-        setPage(newPage);
+        setGobalValue('page', newPage)
     };
 
     const handleChangeRowsPerPage = event => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+        setRowsPerPage(parseInt(event.target.value, 10))
+        setGobalValue('page', 0)
     };
 
-    const isSelected = tile => selected.indexOf(tile) !== -1;
+    const isSelected = tile => state.rowsSelected.indexOf(tile) !== -1
 
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - state.page * rowsPerPage)
+
+    const onSelectEdit = () => {
+        const { rowsSelected } = state
+        history.push({
+            pathname: '/new-book-list',
+            state: {
+                bookListId: rowsSelected,
+                editMode: true
+            }
+        })
+        setGobalValue('editMode', true)
+    }
+
+    const onSelectDelete = () => {
+        const { rowsSelected, bookLists } = state
+
+        if (window.confirm('Are you sure')) {
+            const newBookList = bookLists.filter(list => {
+                return list.booklistId !== rowsSelected[0]
+            })
+            setGobalValue('bookLists', newBookList)
+            setGobalValue('rowsSelected', [])
+        }
+    }
+
+    const onSelectAdd = () => {
+    history.push({
+        pathname: '/new-book-list',
+        state: {
+            editMode: false
+        }
+    })
+}
+
+
 
     return (
-        <div className={classes.root}>
-
-            <EnhancedTableToolbar numSelected={selected.length} />
+        <Fragment>
+            <EnhancedTableToolbar
+                    totalRowsSelected={state.rowsSelected.length}
+                    onSelectEdit={onSelectEdit}
+                    onSelectDelete={onSelectDelete}
+                    onSelectAdd={onSelectAdd}
+                />
             <div className={classes.tableWrapper}>
                 <Table
                     className={classes.table}
@@ -241,7 +283,7 @@ const EnhancedTable = ({ rows }) => {
                 >
                     <EnhancedTableHead
                         classes={classes}
-                        numSelected={selected.length}
+                        numSelected={state.rowsSelected.length}
                         order={order}
                         orderBy={orderBy}
                         onSelectAllClick={handleSelectAllClick}
@@ -249,38 +291,32 @@ const EnhancedTable = ({ rows }) => {
                         rowCount={rows.length}
                     />
                     <TableBody>
-                        {stableSort(rows, getSorting(order, orderBy))
-                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row, index) => {
-                                const isItemSelected = isSelected(row.name);
-                                const labelId = `enhanced-table-checkbox-${index}`;
-
-                                return (
-                                    <TableRow
-                                        hover
-                                        onClick={event => handleClick(event, row.name)}
-                                        role="checkbox"
-                                        aria-checked={isItemSelected}
-                                        tabIndex={-1}
-                                        key={row.displayId}
-                                        selected={isItemSelected}
+                            {stableSort(rows, getSorting(order, orderBy))
+                                .slice(state.page * rowsPerPage, state.page * rowsPerPage + rowsPerPage)
+                                .map(row => {
+                                    const isItemSelected = isSelected(row.booklistId)
+                                    return (
+                                        <TableRow
+                                            hover
+                                            onClick={event => handleClick(event, row.booklistId)}
+                                            role="checkbox"
+                                            tabIndex={-1}
+                                            key={row.displayId}
+                                            selected={isItemSelected}
                                     >
                                         <TableCell padding="checkbox">
                                             <Checkbox
                                                 checked={isItemSelected}
-                                                inputProps={{ 'aria-labelledby': labelId }}
                                             />
                                         </TableCell>
-                                        {/*Change value here row.owner by display JSON keys*/}
-
-                                        <TableCell component="th" id={labelId} scope="row" padding="none">
-                                            {row.name}
+                                        <TableCell style={{ display: 'none' }}>
+                                            {row.booklistId}
                                         </TableCell>
-                                        {/*Change value here row.owner by display JSON keys*/}
-                                        <TableCell align="left">{row.branch}</TableCell>
-                                        {/*Change value here row.owner by display JSON keys*/}
-                                        <TableCell align="left">{row.booklist ? 'Yes' : 'No'}</TableCell>
-                                        <TableCell align="left">{row.layout ? 'Yes' : 'No'}</TableCell>
+                                        <TableCell padding='none'>
+                                                {row.name}
+                                        </TableCell>
+                                            <TableCell align="left">{row.branch}</TableCell>
+                                        <TableCell align="left">{row.active ? 'Yes' : 'No'}</TableCell>
                                     </TableRow>
                                 );
                             })}
@@ -297,7 +333,7 @@ const EnhancedTable = ({ rows }) => {
                 component="div"
                 count={rows.length}
                 rowsPerPage={rowsPerPage}
-                page={page}
+                page={state.page}
                 backIconButtonProps={{
                     'aria-label': 'previous page',
                 }}
@@ -307,7 +343,7 @@ const EnhancedTable = ({ rows }) => {
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
             />
-        </div>
+        </Fragment>
     );
 }
 

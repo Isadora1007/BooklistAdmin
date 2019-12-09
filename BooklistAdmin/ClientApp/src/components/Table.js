@@ -44,7 +44,7 @@ function getSorting(order, orderBy) {
 }
 
 const headCells = [
-    { id: 'booklistId', numeric: true, disablePadding: false, label: 'Book list id', style:{ display: 'none' } },
+    { id: 'booklistId', numeric: true, disablePadding: false, label: 'Book list id', style: { display: 'none' } },
     { id: 'title', numeric: false, disablePadding: true, label: 'Title' },
     { id: 'owner', numeric: false, disablePadding: false, label: 'Owner' },
     { id: 'active', numeric: false, disablePadding: false, label: 'In use' },
@@ -243,14 +243,14 @@ const EnhancedTable = ({ rows }) => {
 
     const onSelectDelete = () => {
         const { rowsSelected, bookLists } = state
-        
+
         if (window.confirm('Are you sure')) {
             const newBookList = bookLists.filter(list => {
                 return list.booklistId !== rowsSelected[0]
             })
             setGobalValue('bookLists', newBookList)
             setGobalValue('rowsSelected', [])
-        }  
+        }
     }
 
     const onSelectAdd = () => {
@@ -305,7 +305,7 @@ const EnhancedTable = ({ rows }) => {
                                                 checked={isItemSelected}
                                             />
                                         </TableCell>
-                                        <TableCell style={{display: 'none'}}>
+                                        <TableCell style={{ display: 'none' }}>
                                             {row.booklistId}
                                         </TableCell>
                                         <TableCell padding='none'>
