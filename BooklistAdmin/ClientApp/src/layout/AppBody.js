@@ -10,7 +10,7 @@ import Displays from '../pages/Displays'
 import SignIn from '../pages/SignIn'
 import BookListForm from '../pages/BookListForm'
 import PageNotFound from '../pages/PageNotFound'
-
+import SnackBar from '../components/SnackBar'
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -35,6 +35,7 @@ const BodyGrid = () => {
                     </Route>
                 </Switch>
             </Grid>
+            <SnackBar/>
         </div>
     );
 }

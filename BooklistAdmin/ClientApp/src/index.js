@@ -6,8 +6,10 @@ import { createProvider } from './Context'
 
 //Setting application initial States 
 const AppProvider = createProvider({
-    isAuth: false,
+    isAuth: true,
     editMode: false,
+    isSanckbarOpen: false,
+    sanckbarMsg: '',
     page: 0,
     userData: {
         authenticateToken: null,

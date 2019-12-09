@@ -53,8 +53,12 @@ const BookListForm = (props) => {
         if (state.editMode) {
             editBookList(bookListId, JSON.stringify(formInputs))
             setGobalValue('editMode', false)
+            setGobalValue('sanckbarMsg', `${formInputs.title} was edited`)
+            setGobalValue('isSanckbarOpen', true)
         } else {
             SetNewBookList(formInputs)
+            setGobalValue('sanckbarMsg', `${formInputs.title} was created`)
+            setGobalValue('isSanckbarOpen', true)
         }
         history.goBack()
     }

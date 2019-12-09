@@ -6,8 +6,7 @@
     };
 
     const requestData = await fetch(`./api/booklists/${id}`, requestOptions)
-    const response = await requestData.text()
-    return response
+    return requestData
 }
 
 export default deleteBookList
