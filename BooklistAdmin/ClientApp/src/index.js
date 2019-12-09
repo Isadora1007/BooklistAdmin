@@ -20,6 +20,7 @@ const AppProvider = createProvider({
         userName: "",   
     },
     rowsSelected: [],
+    rowsPerPage: 25,
     bookLists: null,
     displays: {},
     booklistLayaout: {},

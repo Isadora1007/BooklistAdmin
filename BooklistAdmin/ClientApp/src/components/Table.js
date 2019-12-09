@@ -48,7 +48,7 @@ const headCells = [
     { id: 'booklistId', numeric: true, disablePadding: false, label: 'Book list id', style:{ display: 'none' } },
     { id: 'title', numeric: false, disablePadding: true, label: 'Title' },
     { id: 'owner', numeric: false, disablePadding: false, label: 'Owner' },
-    { id: 'active', numeric: false, disablePadding: false, label: 'In use' },
+    { id: 'active', numeric: false, disablePadding: false, label: 'Playing at branch' },
 ]
 
 function EnhancedTableHead(props) {
@@ -153,6 +153,7 @@ const useStyles = makeStyles(theme => ({
     },
     tableWrapper: {
         overflowX: 'auto',
+        height: 'calc(100vh - 256px)'
     },
     visuallyHidden: {
         border: 0,
@@ -174,7 +175,7 @@ const EnhancedTable = ({ rows }) => {
     const [order, setOrder] = React.useState('asc')
     const [orderBy, setOrderBy] = React.useState('booklistId')
 
-    const [rowsPerPage, setRowsPerPage] = React.useState(10)
+    //const [rowsPerPage, setRowsPerPage] = React.useState(10)
 
     const handleRequestSort = (event, property) => {
         const isDesc = orderBy === property && order === 'desc'
@@ -211,13 +212,13 @@ const EnhancedTable = ({ rows }) => {
     }
 
     const handleChangeRowsPerPage = event => {
-        setRowsPerPage(parseInt(event.target.value, 10))
+        setGobalValue('rowsPerPage', parseInt(event.target.value, 10))
         setGobalValue('page', 0)
     }
 
     const isSelected = tile => state.rowsSelected.indexOf(tile) !== -1
 
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - state.page * rowsPerPage)
+    const emptyRows = state.rowsPerPage - Math.min(state.rowsPerPage, rows.length - state.page * state.rowsPerPage)
 
     const onSelectEdit = () => {
         const { rowsSelected } = state
@@ -272,10 +273,11 @@ const EnhancedTable = ({ rows }) => {
             />
             <div className={classes.tableWrapper}>
                 <Table
+                    stickyHeader
                     className={classes.table}
                     aria-labelledby="tableTitle"
                     size='small'
-                    aria-label="enhanced table"
+                    //aria-label="enhanced table"
                 >
                     <EnhancedTableHead
                         classes={classes}
@@ -288,7 +290,7 @@ const EnhancedTable = ({ rows }) => {
                     />
                     <TableBody>
                         {stableSort(rows, getSorting(order, orderBy))
-                            .slice(state.page * rowsPerPage, state.page * rowsPerPage + rowsPerPage)
+                            .slice(state.page * state.rowsPerPage, state.page * state.rowsPerPage + state.rowsPerPage)
                             .map(row => {
                                 const isItemSelected = isSelected(row.booklistId)
                                 return (
@@ -325,10 +327,10 @@ const EnhancedTable = ({ rows }) => {
                 </Table>
             </div>
             <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
+                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
                 component="div"
                 count={rows.length}
-                rowsPerPage={rowsPerPage}
+                rowsPerPage={state.rowsPerPage}
                 page={state.page}
                 backIconButtonProps={{
                     'aria-label': 'previous page',

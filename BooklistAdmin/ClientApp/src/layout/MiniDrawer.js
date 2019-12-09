@@ -73,6 +73,7 @@ const useStyles = makeStyles(theme => ({
             duration: theme.transitions.duration.leavingScreen,
         }),
         marginLeft: -drawerWidth,
+        height: '100vh',
     },
     contentShift: {
         transition: theme.transitions.create('margin', {
@@ -155,6 +156,7 @@ const PersistentDrawer = () => {
                 </List>
             </Drawer>
             <main
+                id='test'
                 className={clsx(classes.content, {
                     [classes.contentShift]: open,
                 })}
