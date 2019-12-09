@@ -1,7 +1,8 @@
 ﻿Functionalities
-Delete record trough api
-Add snack bar feed back
+
 Clean layout
+Need to handle rows per page state globaly
+
 
 
 Pages

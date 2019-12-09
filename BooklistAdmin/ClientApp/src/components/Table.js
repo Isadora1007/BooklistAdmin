@@ -18,6 +18,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import Fab from '@material-ui/core/Fab'
 import { useHistory } from 'react-router-dom'
 import { Ctx } from '../Context'
+import deleteBookList from '../api/deleteBookList'
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -60,12 +61,7 @@ function EnhancedTableHead(props) {
         <TableHead>
             <TableRow>
                 <TableCell padding="checkbox">
-                    <Checkbox
-                        indeterminate={numSelected > 0 && numSelected < rowCount}
-                        checked={numSelected === rowCount}
-                        onChange={onSelectAllClick}
-                        inputProps={{ 'aria-label': 'select all lists' }}
-                    />
+
                 </TableCell>
                 {headCells.map(headCell => (
                     <TableCell
@@ -151,7 +147,6 @@ EnhancedTableToolbar.propTypes = {
 const useStyles = makeStyles(theme => ({
     root: {
         width: '100%',
-        //marginTop: theme.spacing(3),
     },
     table: {
         minWidth: 750,
@@ -178,7 +173,7 @@ const EnhancedTable = ({ rows }) => {
     const classes = useStyles()
     const [order, setOrder] = React.useState('asc')
     const [orderBy, setOrderBy] = React.useState('booklistId')
-    //const [page, setPage] = React.useState(0)
+
     const [rowsPerPage, setRowsPerPage] = React.useState(10)
 
     const handleRequestSort = (event, property) => {
@@ -199,21 +194,16 @@ const EnhancedTable = ({ rows }) => {
 
     const handleClick = (event, id) => {
         const selectedIndex = state.rowsSelected.indexOf(id)
+        
         let newSelected = []
 
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(state.rowsSelected, id)
+            newSelected.push(id)
+            setGobalValue('rowsSelected', newSelected)
         } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(state.rowsSelected.slice(1))
-        } else if (selectedIndex === state.rowsSelected.length - 1) {
-            newSelected = newSelected.concat(state.rowsSelected.slice(0, -1))
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                state.rowsSelected.slice(0, selectedIndex),
-                state.rowsSelected.slice(selectedIndex + 1),
-            )
+            newSelected.pop()
+            setGobalValue('rowsSelected', newSelected)
         }
-        setGobalValue('rowsSelected', newSelected)
     }
 
     const handleChangePage = (event, newPage) => {
@@ -241,16 +231,26 @@ const EnhancedTable = ({ rows }) => {
         setGobalValue('editMode', true)
     }
 
-    const onSelectDelete = () => {
+    const onSelectDelete = async () => {
         const { rowsSelected, bookLists } = state
-        
         if (window.confirm('Are you sure')) {
             const newBookList = bookLists.filter(list => {
                 return list.booklistId !== rowsSelected[0]
             })
-            setGobalValue('bookLists', newBookList)
-            setGobalValue('rowsSelected', [])
-        }  
+            const request = await deleteBookList(rowsSelected)
+            const status = request.status
+            const response = await request.text()
+            console.log(response)
+            if (status === 200) {
+                setGobalValue('bookLists', newBookList)
+                setGobalValue('rowsSelected', [])
+                setGobalValue('sanckbarMsg', `${JSON.parse(response).title} was deleted`)
+                //Talk to Frank about returning perhaps json objects 
+                setGobalValue('isSanckbarOpen', true)
+            } else {
+                //talk to frank about 500 errors and records that can not be deleted 
+            }
+        }
     }
 
     const onSelectAdd = () => {
