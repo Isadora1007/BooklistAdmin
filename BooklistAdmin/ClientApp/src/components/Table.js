@@ -5,7 +5,6 @@ import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
-import TablePagination from '@material-ui/core/TablePagination'
 import TableRow from '@material-ui/core/TableRow'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -52,7 +51,7 @@ const headCells = [
 ]
 
 function EnhancedTableHead(props) {
-    const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props
+    const { classes, order, orderBy, onRequestSort } = props
     const createSortHandler = property => event => {
         onRequestSort(event, property)
     }
@@ -153,7 +152,7 @@ const useStyles = makeStyles(theme => ({
     },
     tableWrapper: {
         overflowX: 'auto',
-        height: 'calc(100vh - 256px)'
+        height: 'calc(100vh - 210px)'
     },
     visuallyHidden: {
         border: 0,
@@ -175,8 +174,6 @@ const EnhancedTable = ({ rows }) => {
     const [order, setOrder] = React.useState('asc')
     const [orderBy, setOrderBy] = React.useState('booklistId')
 
-    //const [rowsPerPage, setRowsPerPage] = React.useState(10)
-
     const handleRequestSort = (event, property) => {
         const isDesc = orderBy === property && order === 'desc'
         setOrder(isDesc ? 'asc' : 'desc')
@@ -195,7 +192,7 @@ const EnhancedTable = ({ rows }) => {
 
     const handleClick = (event, id) => {
         const selectedIndex = state.rowsSelected.indexOf(id)
-        
+
         let newSelected = []
 
         if (selectedIndex === -1) {
@@ -207,18 +204,7 @@ const EnhancedTable = ({ rows }) => {
         }
     }
 
-    const handleChangePage = (event, newPage) => {
-        setGobalValue('page', newPage)
-    }
-
-    const handleChangeRowsPerPage = event => {
-        setGobalValue('rowsPerPage', parseInt(event.target.value, 10))
-        setGobalValue('page', 0)
-    }
-
     const isSelected = tile => state.rowsSelected.indexOf(tile) !== -1
-
-    const emptyRows = state.rowsPerPage - Math.min(state.rowsPerPage, rows.length - state.page * state.rowsPerPage)
 
     const onSelectEdit = () => {
         const { rowsSelected } = state
@@ -276,8 +262,7 @@ const EnhancedTable = ({ rows }) => {
                     stickyHeader
                     className={classes.table}
                     aria-labelledby="tableTitle"
-                    size='small'
-                    //aria-label="enhanced table"
+                    size='medium'
                 >
                     <EnhancedTableHead
                         classes={classes}
@@ -290,7 +275,6 @@ const EnhancedTable = ({ rows }) => {
                     />
                     <TableBody>
                         {stableSort(rows, getSorting(order, orderBy))
-                            .slice(state.page * state.rowsPerPage, state.page * state.rowsPerPage + state.rowsPerPage)
                             .map(row => {
                                 const isItemSelected = isSelected(row.booklistId)
                                 return (
@@ -307,7 +291,7 @@ const EnhancedTable = ({ rows }) => {
                                                 checked={isItemSelected}
                                             />
                                         </TableCell>
-                                        <TableCell style={{display: 'none'}}>
+                                        <TableCell style={{ display: 'none' }}>
                                             {row.booklistId}
                                         </TableCell>
                                         <TableCell padding='none'>
@@ -318,29 +302,10 @@ const EnhancedTable = ({ rows }) => {
                                     </TableRow>
                                 )
                             })}
-                        {emptyRows > 0 && (
-                            <TableRow style={{ height: 33 * emptyRows }}>
-                                <TableCell colSpan={6} />
-                            </TableRow>
-                        )}
+                        
                     </TableBody>
                 </Table>
             </div>
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                component="div"
-                count={rows.length}
-                rowsPerPage={state.rowsPerPage}
-                page={state.page}
-                backIconButtonProps={{
-                    'aria-label': 'previous page',
-                }}
-                nextIconButtonProps={{
-                    'aria-label': 'next page',
-                }}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-            />
         </Fragment>
     )
 }

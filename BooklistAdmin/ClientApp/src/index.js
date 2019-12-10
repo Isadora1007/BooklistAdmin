@@ -10,7 +10,6 @@ const AppProvider = createProvider({
     editMode: false,
     isSanckbarOpen: false,
     sanckbarMsg: '',
-    page: 0,
     userData: {
         authenticateToken: null,
         authenticated: false,   
@@ -20,7 +19,6 @@ const AppProvider = createProvider({
         userName: "",   
     },
     rowsSelected: [],
-    rowsPerPage: 25,
     bookLists: null,
     displays: {},
     booklistLayaout: {},

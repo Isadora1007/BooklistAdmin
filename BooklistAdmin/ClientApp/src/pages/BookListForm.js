@@ -5,17 +5,12 @@ import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
-import Branches from '../components/Select'
 import Button from '@material-ui/core/Button'
 import SetNewBookList from '../api/SetNewBookList'
 import getBookList from '../api/getBookList'
 import editBookList from '../api/editBookList'
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
-import InputLabel from '@material-ui/core/InputLabel'
-import MenuItem from '@material-ui/core/MenuItem'
-import FormControl from '@material-ui/core/FormControl'
-import Select from '@material-ui/core/Select'
 import { Ctx } from '../Context'
 
 const useStyles = makeStyles(theme => ({
@@ -31,11 +26,6 @@ const BookListForm = (props) => {
     const classes = useStyles()
     let history = useHistory()
 
-    //Drop-down states
-    const [branchList, setBranchList] = React.useState({ ListOfItems: [{ Name: 'None', Code: 'none' }] })
-    const inputLabel = React.useRef(null)
-    const [labelWidth, setLabelWidth] = React.useState(0)
-
     const [formState, setFormState] = useState({
         formInputs: {
             title: '',
@@ -48,7 +38,6 @@ const BookListForm = (props) => {
     })
 
     useEffect(() => {
-        setLabelWidth(inputLabel.current.offsetWidth)
         const fetchBookLists = async () => {
             const resposne = await getBookList(bookListId)
             setFormState({ ...formState, formInputs: resposne })
@@ -56,12 +45,6 @@ const BookListForm = (props) => {
         if (state.editMode) {
             fetchBookLists()
         }
-        const fetchBranchList = async () => {
-            const requestData = await fetch('https://reg.calgarylibrary.ca/web-services?sn=Branches')
-            const response = await requestData.text()
-            setBranchList(JSON.parse(response))
-        }
-        fetchBranchList()
     }, [])
 
     const handleChange = (e, name) => {
@@ -92,7 +75,7 @@ const BookListForm = (props) => {
     }
 
     //CTA stands for call to action
-    let cta = state.editMode ? 'Edit book list' : 'Create book list'
+    let cta = state.editMode ? 'Save edits' : 'Create'
 
     return (
         <Fragment>
@@ -133,24 +116,6 @@ const BookListForm = (props) => {
                             variant="outlined"
                             onChange={e => handleChange(e, 'owner')}
                         />
-                        <FormControl variant="outlined" fullWidth>
-                            <InputLabel ref={inputLabel} id="demo-simple-select-outlined-label">
-                                Select a branch
-                            </InputLabel>
-                            <Select
-                                labelId="demo-simple-select-outlined-label"
-                                id="demo-simple-select-outlined"
-                                value={formState.formInputs.branch}
-                                onChange={e => handleChange(e, 'branch')}
-                                labelWidth={labelWidth}
-                            >
-                                {
-                                    branchList.ListOfItems.map(b => <MenuItem key={b.Code} value={b.Code}>{b.Name}</MenuItem>)
-                                }
-
-                            </Select>
-                        </FormControl>
-
                         <FormControlLabel
                             control={
                                 <Switch checked={formState.formInputs.active} onChange={e => handleSwitchChange(e, 'active')} value="active" />
