@@ -15,6 +15,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import AddIcon from '@material-ui/icons/Add'
 import EditIcon from '@material-ui/icons/Edit'
 import Fab from '@material-ui/core/Fab'
+import Typography from '@material-ui/core/Typography'
 import { useHistory } from 'react-router-dom'
 import { Ctx } from '../Context'
 import deleteBookList from '../api/deleteBookList'
@@ -102,39 +103,47 @@ EnhancedTableHead.propTypes = {
 const useToolbarStyles = makeStyles(theme => ({
     root: {
         paddingLeft: theme.spacing(2),
-        paddingRight: theme.spacing(0),
+        paddingRight: theme.spacing(2),
+        justifyContent: 'space-between'
     },
-    title: {
-        flex: '1 1 100%',
-    },
+    
+    actions: {
+        marginLeft: theme.spacing(1)
+    }
 }))
 
 const EnhancedTableToolbar = props => {
     const classes = useToolbarStyles()
-    const { totalRowsSelected, onSelectEdit, onSelectDelete, onSelectAdd } = props
+    const { totalRowsSelected, onSelectEdit, onSelectDelete, onSelectAdd, listLenght } = props
 
     return (
         <Toolbar className={classes.root}>
-            {totalRowsSelected === 1 ?
-                <Tooltip title="Edit selected book list">
-                    <IconButton aria-label="Edit selected book list" onClick={() => { onSelectEdit() }}>
-                        <EditIcon />
-                    </IconButton>
-                </Tooltip> : null
-            }
-            {totalRowsSelected > 0 ?
-                <Tooltip title="Delete selected book list" onClick={() => { onSelectDelete() }}>
-                    <IconButton aria-label="Delete selected book list">
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip> : null
-            }
-
-            <Tooltip title="Add new book list">
-                <Fab color="secondary" aria-label="add" size="small" onClick={() => { onSelectAdd() }}>
-                    <AddIcon />
-                </Fab>
-            </Tooltip>
+            <div>
+                <Tooltip title="Add new book list">
+                    <Fab color="secondary" aria-label="add" size="small" onClick={() => { onSelectAdd() }}>
+                        <AddIcon />
+                    </Fab>
+                </Tooltip>
+            
+                {totalRowsSelected === 1 ?
+                    <Fragment>
+                        <Tooltip title="Edit selected book list">
+                            <IconButton className={classes.actions}aria-label="Edit selected book list" onClick={() => { onSelectEdit() }}>
+                                <EditIcon />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete selected book list" onClick={() => { onSelectDelete() }}>
+                            <IconButton className={classes.actions}aria-label="Delete selected book list">
+                                <DeleteIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </Fragment>
+                     : null
+                    }
+            </div>
+            <Typography variant="body2" color="textSecondary">
+                {`${listLenght} Book lists`} 
+            </Typography>
         </Toolbar>
     )
 }
@@ -152,7 +161,7 @@ const useStyles = makeStyles(theme => ({
     },
     tableWrapper: {
         overflowX: 'auto',
-        height: 'calc(100vh - 210px)'
+        height: 'calc(100vh - 176px)'
     },
     visuallyHidden: {
         border: 0,
@@ -227,7 +236,7 @@ const EnhancedTable = ({ rows }) => {
             const request = await deleteBookList(rowsSelected)
             const status = request.status
             const response = await request.text()
-            console.log(response)
+
             if (status === 200) {
                 setGobalValue('bookLists', newBookList)
                 setGobalValue('rowsSelected', [])
@@ -256,6 +265,7 @@ const EnhancedTable = ({ rows }) => {
                 onSelectEdit={onSelectEdit}
                 onSelectDelete={onSelectDelete}
                 onSelectAdd={onSelectAdd}
+                listLenght={state.bookLists.length}
             />
             <div className={classes.tableWrapper}>
                 <Table

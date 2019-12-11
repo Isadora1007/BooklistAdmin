@@ -6,16 +6,8 @@ import Table from '../components/Table'
 import getBookList from '../api/getBookList'
 import { Ctx } from '../Context'
 
-const useStyles = makeStyles(theme => ({
-    paper: {
-        padding: theme.spacing(2),
-        color: theme.palette.text.secondary,
-    },
-}));
-
 const BookList = () => {
 
-    const classes = useStyles()
     const { setGobalValue, state } = useContext(Ctx)
 
     useEffect(() => {
@@ -30,7 +22,7 @@ const BookList = () => {
         <Fragment>
 
             <Grid item xs={12}>
-                <Paper className={classes.paper}>
+                <Paper>
                     {
                         !state.bookLists ?
                         null
