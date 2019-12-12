@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useContext } from 'react'
 import Grid from '@material-ui/core/Grid'
-import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Table from '../components/Table'
 import getBookList from '../api/getBookList'
@@ -31,7 +30,7 @@ const BookList = () => {
                 </Paper>
             </Grid>
         </Fragment>
-    );
+    )
 }
 
 export default BookList

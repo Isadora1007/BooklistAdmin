@@ -20,9 +20,9 @@ const AppProvider = createProvider({
     },
     rowsSelected: [],
     bookLists: null,
-    displays: {},
-    booklistLayaout: {},
-    collections: {},
+    displays: null,
+    booklistLayout: null,
+    collections: null,
 })
 
 //Modify m-ui theme color palette

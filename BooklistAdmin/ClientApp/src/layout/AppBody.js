@@ -9,6 +9,7 @@ import Collections from '../pages/Collections'
 import Displays from '../pages/Displays'
 import SignIn from '../pages/SignIn'
 import BookListForm from '../pages/BookListForm'
+import BookListLayoutForm from '../pages/BookListLayoutForm'
 import PageNotFound from '../pages/PageNotFound'
 import SnackBar from '../components/SnackBar'
 
@@ -27,9 +28,11 @@ const BodyGrid = () => {
                 <Switch>
                     <PrivateRoute exact path='/' component={BookList} />
                     <PrivateRoute exact path='/new-book-list' component={BookListForm} />
+                    <PrivateRoute exact path='/book-list-layout-form' component={BookListLayoutForm} />
                     <PrivateRoute exact path='/book-list-layout' component={BookListLayout} />
                     <PrivateRoute exact path='/collections' component={Collections} />
                     <PrivateRoute exact path='/displays' component={Displays} />
+                    
                     <Route exact path='/sign-in' component={SignIn} /><Route path="*">
                         <PageNotFound />
                     </Route>
