@@ -1,43 +1,37 @@
-import React, { Fragment, useEffect,useState } from 'react'
+import React, { Fragment, useEffect, useContext } from 'react'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Table2 from '../components/Table2'
 import getDisplays from '../api/getDisplays'
+import { Ctx } from '../Context'
 
-const useStyles = makeStyles(theme => ({
-    paper: {
-        padding: theme.spacing(2),
-        color: theme.palette.text.secondary,
-    },
-}));
 
 const Displays = () => {
 
-    const classes = useStyles()
-    const [displayList, setdisplayList] = useState([])
+    const { setGobalValue, state } = useContext(Ctx)
 
     useEffect(() => {
         const fetchdisplayList = async () => {
             const resposne = await getDisplays()
-            setdisplayList(resposne)
+            setGobalValue('displays',resposne)
         }
         fetchdisplayList()
     }, [])
     return (
         <Fragment>
-            {/*<Grid item xs={12}>
-                <Paper className={classes.paper}>xs=12</Paper>
-            </Grid> */}
+            
             <Grid item xs={12}>
-                <Paper className={classes.paper}>
-                    {/* <Typography variant="h2" gutterBottom>Displays</Typography> */}
-                    
-                    <Table2 rows={displayList} />
+                <Paper>
+                    {
+                        !state.displays ?
+                        null
+                            : <Table2 rows={state.displays} />
+                    }
                 </Paper>
             </Grid>
         </Fragment>
-    );
+    )
 }
 
 export default Displays

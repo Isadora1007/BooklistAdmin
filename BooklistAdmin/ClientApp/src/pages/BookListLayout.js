@@ -14,6 +14,7 @@ const BookListLayOut = () => {
         const fetchBookListsLayout = async () => {
             const resposne = await getBookListLayout()
             setGobalValue('booklistLayout', resposne)
+            console.log('epa')
         }
         fetchBookListsLayout()
     }, [])

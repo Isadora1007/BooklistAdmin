@@ -268,7 +268,7 @@ const EnhancedTable = ({ rows }) => {
             />
             <div className={classes.tableWrapper}>
                 <Table
-                    stickyHeader
+                    //stickyHeader
                     className={classes.table}
                     aria-labelledby="tableTitle"
                     size='medium'
