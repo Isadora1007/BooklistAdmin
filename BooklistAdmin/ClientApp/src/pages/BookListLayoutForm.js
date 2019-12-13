@@ -106,17 +106,70 @@ const BookListForm = (props) => {
                             onChange={e => handleChange(e, 'name')}
                         />
                         <TextField fullWidth
-                            value={formState.formInputs.title}
+                            value={formState.formInputs.description}
                             margin="normal"
-                            label="Title"
+                            label="Description"
                             variant="outlined"
-                            onChange={e => handleChange(e, 'title')}
+                            onChange={e => handleChange(e, 'description')}
+                        />
+                        <TextField fullWidth
+                            value={formState.formInputs.booksPerPage}
+                            margin="normal"
+                            label="Books Per Page"
+                            variant="outlined"
+                            onChange={e => handleChange(e, 'booksPerPage')}
+                        />
+                        <TextField fullWidth
+                            value={formState.formInputs.booksPerRow}
+                            margin="normal"
+                            label="Books Per Row"
+                            variant="outlined"
+                            onChange={e => handleChange(e, 'booksPerRow')}
+                        />
+                        <TextField fullWidth
+                            value={formState.formInputs.autoSlideTimeout}
+                            margin="normal"
+                            label="Auto Slide Timeout"
+                            variant="outlined"
+                            onChange={e => handleChange(e, 'autoSlideTimeout')}
+                        />
+                        <TextField fullWidth
+                            value={formState.formInputs.width}
+                            margin="normal"
+                            label="Width"
+                            variant="outlined"
+                            onChange={e => handleChange(e, 'width')}
+                        />
+                        <TextField fullWidth
+                            value={formState.formInputs.height}
+                            margin="normal"
+                            label="Height"
+                            variant="outlined"
+                            onChange={e => handleChange(e, 'height')}
                         />
                         <FormControlLabel
                             control={
                                 <Switch checked={formState.formInputs.active} onChange={e => handleSwitchChange(e, 'active')} value="active" />
                             }
                             label="Active"
+                        />
+                        <FormControlLabel
+                            control={
+                                <Switch checked={formState.formInputs.showHolds} onChange={e => handleSwitchChange(e, 'showHolds')} value="showHolds" />
+                            }
+                            label="Show Holds"
+                        />
+                        <FormControlLabel
+                            control={
+                                <Switch checked={formState.formInputs.showGuide} onChange={e => handleSwitchChange(e, 'showGuide')} value="showGuide" />
+                            }
+                            label="Show Guide"
+                        />
+                        <FormControlLabel
+                            control={
+                                <Switch checked={formState.formInputs.showHeader} onChange={e => handleSwitchChange(e, 'showHeader')} value="showHeader" />
+                            }
+                            label="Show Header"
                         />
                     </form>
                     <Button variant="contained" color="primary" disabled={false} onClick={() => { submitForm() }}>
