@@ -1,30 +1,38 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect, useContext } from 'react'
 import Grid from '@material-ui/core/Grid'
-import { makeStyles } from '@material-ui/core/styles'
-import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
+import Paper from '@material-ui/core/Paper'
+import TableBooklistLayout from '../components/TableBooklistLayout'
+import getBookListLayout from '../api/getBookListLayout'
+import { Ctx } from '../Context'
 
-const useStyles = makeStyles(theme => ({
-    paper: {
-        padding: theme.spacing(2),
-        color: theme.palette.text.secondary,
-    },
-}));
 
 const BookListLayOut = () => {
-    const classes = useStyles()
+    const { setGobalValue, state } = useContext(Ctx)
+
+    useEffect(() => {
+        const fetchBookListsLayout = async () => {
+            const resposne = await getBookListLayout()
+            setGobalValue('booklistLayout', resposne)
+        }
+        fetchBookListsLayout()
+    }, [])
+
     return (
         <Fragment>
+
             <Grid item xs={12}>
-                <Paper className={classes.paper}>xs=12</Paper>
-            </Grid>
-            <Grid item xs={12}>
-                <Paper className={classes.paper}>
-                    <Typography variant="h2" gutterBottom>Book list layoy</Typography>
+                {/*<Typography variant='h5' color='textPrimary' gutterBottom>Book list layout</Typography>*/}
+                <Paper>
+                    {
+                        !state.booklistLayout ?
+                            null
+                            : <TableBooklistLayout rows={state.booklistLayout} />
+                    }
                 </Paper>
             </Grid>
         </Fragment>
-    );
+    )
 }
 
 export default BookListLayOut

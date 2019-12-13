@@ -45,9 +45,9 @@ function getSorting(order, orderBy) {
 }
 
 const headCells = [
-    { id: 'booklistId', numeric: true, disablePadding: false, label: 'Book list id', style: { display: 'none' } },
-    { id: 'title', numeric: false, disablePadding: true, label: 'Title' },
-    { id: 'owner', numeric: false, disablePadding: false, label: 'Owner' },
+    { id: 'layoutId', numeric: true, disablePadding: false, label: 'Layout id', style:{ display: 'none' } },
+    { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
+    { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
     { id: 'active', numeric: false, disablePadding: false, label: 'Playing at branch' },
 ]
 
@@ -127,13 +127,13 @@ const EnhancedTableToolbar = props => {
             
                 {totalRowsSelected === 1 ?
                     <Fragment>
-                        <Tooltip title="Edit selected book list">
-                            <IconButton className={classes.actions}aria-label="Edit selected book list" onClick={() => { onSelectEdit() }}>
+                        <Tooltip title="Edit selected layout">
+                            <IconButton className={classes.actions} onClick={() => { onSelectEdit() }}>
                                 <EditIcon />
                             </IconButton>
                         </Tooltip>
-                        <Tooltip title="Delete selected book list" onClick={() => { onSelectDelete() }}>
-                            <IconButton className={classes.actions}aria-label="Delete selected book list">
+                        <Tooltip title="Delete selected layout" onClick={() => { onSelectDelete() }}>
+                            <IconButton className={classes.actions} >
                                 <DeleteIcon />
                             </IconButton>
                         </Tooltip>
@@ -142,7 +142,7 @@ const EnhancedTableToolbar = props => {
                     }
             </div>
             <Typography variant="body2" color="textSecondary">
-                {`${listLenght} Book lists`} 
+                {`${listLenght} book list layouts`} 
             </Typography>
         </Toolbar>
     )
@@ -181,7 +181,7 @@ const EnhancedTable = ({ rows }) => {
     const { setGobalValue, state } = useContext(Ctx)
     const classes = useStyles()
     const [order, setOrder] = React.useState('asc')
-    const [orderBy, setOrderBy] = React.useState('booklistId')
+    const [orderBy, setOrderBy] = React.useState('layoutId')
 
     const handleRequestSort = (event, property) => {
         const isDesc = orderBy === property && order === 'desc'
@@ -192,7 +192,7 @@ const EnhancedTable = ({ rows }) => {
     const handleSelectAllClick = event => {
 
         if (event.target.checked) {
-            const newSelecteds = rows.map(n => n.booklistId)
+            const newSelecteds = rows.map(n => n.layoutId)
             setGobalValue('rowsSelected', newSelecteds)
             return
         }
@@ -218,10 +218,9 @@ const EnhancedTable = ({ rows }) => {
     const onSelectEdit = () => {
         const { rowsSelected } = state
         history.push({
-            pathname: '/new-book-list',
+            pathname: '/book-list-layout-form',
             state: {
-                bookListId: rowsSelected,
-                editMode: true
+                layoutId: rowsSelected,
             }
         })
         setGobalValue('editMode', true)
@@ -229,10 +228,9 @@ const EnhancedTable = ({ rows }) => {
 
     const onSelectDelete = async () => {
         const { rowsSelected, bookLists } = state
-
         if (window.confirm('Are you sure')) {
             const newBookList = bookLists.filter(list => {
-                return list.booklistId !== rowsSelected[0]
+                return list.layoutId !== rowsSelected[0]
             })
             const request = await deleteBookList(rowsSelected)
             const status = request.status
@@ -241,7 +239,7 @@ const EnhancedTable = ({ rows }) => {
             if (status === 200) {
                 setGobalValue('bookLists', newBookList)
                 setGobalValue('rowsSelected', [])
-                setGobalValue('sanckbarMsg', `${JSON.parse(response).title} was deleted`)
+                setGobalValue('sanckbarMsg', `${JSON.parse(response).name} was deleted`)
                 //Talk to Frank about returning perhaps json objects 
                 setGobalValue('isSanckbarOpen', true)
             } else {
@@ -252,7 +250,7 @@ const EnhancedTable = ({ rows }) => {
 
     const onSelectAdd = () => {
         history.push({
-            pathname: '/new-book-list',
+            pathname: '/book-list-layout-form',
             state: {
                 editMode: false
             }
@@ -266,7 +264,7 @@ const EnhancedTable = ({ rows }) => {
                 onSelectEdit={onSelectEdit}
                 onSelectDelete={onSelectDelete}
                 onSelectAdd={onSelectAdd}
-                listLenght={state.bookLists.length}
+                listLenght={state.booklistLayout.length}
             />
             <div className={classes.tableWrapper}>
                 <Table
@@ -287,14 +285,14 @@ const EnhancedTable = ({ rows }) => {
                     <TableBody>
                         {stableSort(rows, getSorting(order, orderBy))
                             .map(row => {
-                                const isItemSelected = isSelected(row.booklistId)
+                                const isItemSelected = isSelected(row.layoutId)
                                 return (
                                     <TableRow
                                         hover
-                                        onClick={event => handleClick(event, row.booklistId)}
+                                        onClick={event => handleClick(event, row.layoutId)}
                                         role="checkbox"
                                         tabIndex={-1}
-                                        key={row.booklistId}
+                                        key={row.layoutId}
                                         selected={isItemSelected}
                                     >
                                         <TableCell padding="checkbox">
@@ -303,12 +301,12 @@ const EnhancedTable = ({ rows }) => {
                                             />
                                         </TableCell>
                                         <TableCell style={{ display: 'none' }}>
-                                            {row.booklistId}
+                                            {row.layoutId}
                                         </TableCell>
                                         <TableCell padding='none'>
-                                            {row.title}
+                                            {row.name}
                                         </TableCell>
-                                        <TableCell align="left">{row.owner}</TableCell>
+                                        <TableCell align="left">{row.description}</TableCell>
                                         <TableCell align="left">{row.active ? 'Yes' : 'No'}</TableCell>
                                     </TableRow>
                                 )

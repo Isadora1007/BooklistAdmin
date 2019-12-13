@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import SetNewBookList from '../api/SetNewBookList'
-import getBookList from '../api/getBookList'
+import getBookListLayout from '../api/getBookListLayout'
 import editBookList from '../api/editBookList'
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
@@ -21,29 +21,42 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const BookListForm = (props) => {
-    const bookListId = !props.location.state.bookListId ? '' : props.location.state.bookListId
+    const layoutId = !props.location.state.layoutId ? '' : props.location.state.layoutId
     const { state, setGobalValue } = useContext(Ctx)
     const classes = useStyles()
     let history = useHistory()
 
     const [formState, setFormState] = useState({
         formInputs: {
-            title: '',
-            owner: '',
+            layoutId: 0,
+            name:'',
+            collectionTypeId: 0,
             description: '',
-            bibliocommonslisturl: '',
-            branch: '',
-            active: false
+            showHolds: false,
+            booksPerPage: 0,
+            booksPerRow: 0,
+            showGuide: false,
+            styleId: 0,
+            autoSlideTimeout: 0,
+            width: 0,
+            height: 0,
+            showHeader: false,
+            active: false,
+            collectionType: null,
+            display: []
         }
     })
 
+    
+
     useEffect(() => {
-        const fetchBookLists = async () => {
-            const resposne = await getBookList(bookListId)
-            setFormState({ ...formState, formInputs: resposne })
+        const fetchBookListLayout = async () => {
+            const response = await getBookListLayout(layoutId)
+            setFormState({ ...formState, formInputs: response })
         }
         if (state.editMode) {
-            fetchBookLists()
+            console.log('fetching')
+            fetchBookListLayout()
         }
     }, [])
 
@@ -57,14 +70,14 @@ const BookListForm = (props) => {
     const submitForm = () => {
         const { formInputs } = formState
         if (state.editMode) {
-            editBookList(bookListId, JSON.stringify(formInputs))
-            setGobalValue('editMode', false)
-            setGobalValue('sanckbarMsg', `${formInputs.title} was edited`)
-            setGobalValue('isSanckbarOpen', true)
+            editBookList(layoutId, JSON.stringify(formInputs))
+            //setGobalValue('editMode', false)
+            //setGobalValue('sanckbarMsg', `${formInputs.title} was edited`)
+            //setGobalValue('isSanckbarOpen', true)
         } else {
             SetNewBookList(formInputs)
-            setGobalValue('sanckbarMsg', `${formInputs.title} was created`)
-            setGobalValue('isSanckbarOpen', true)
+            //setGobalValue('sanckbarMsg', `${formInputs.title} was created`)
+            //setGobalValue('isSanckbarOpen', true)
         }
         history.goBack()
     }
@@ -87,10 +100,10 @@ const BookListForm = (props) => {
                             required
                             fullWidth
                             margin="normal"
-                            label="URL list"
-                            value={formState.formInputs.bibliocommonslisturl}
+                            label="Name"
+                            value={formState.formInputs.name}
                             variant="outlined"
-                            onChange={e => handleChange(e, 'bibliocommonslisturl')}
+                            onChange={e => handleChange(e, 'name')}
                         />
                         <TextField fullWidth
                             value={formState.formInputs.title}
@@ -98,23 +111,6 @@ const BookListForm = (props) => {
                             label="Title"
                             variant="outlined"
                             onChange={e => handleChange(e, 'title')}
-                        />
-                        <TextField fullWidth
-                            label="Description"
-                            value={formState.formInputs.description}
-                            multiline
-                            rows="8"
-                            margin="normal"
-                            variant="outlined"
-                            onChange={e => handleChange(e, 'description')}
-                        />
-                        <TextField
-                            fullWidth
-                            value={formState.formInputs.owner}
-                            margin="normal"
-                            label="Owner"
-                            variant="outlined"
-                            onChange={e => handleChange(e, 'owner')}
                         />
                         <FormControlLabel
                             control={

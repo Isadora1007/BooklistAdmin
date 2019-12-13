@@ -1,8 +1,7 @@
 ﻿Functionalities
-
 Clean layout
-Need to handle rows per page state globaly
-
+Reconsider whether pagination is necessary
+Add select component for choosing branch name 
 
 
 Pages

@@ -10,7 +10,6 @@ const AppProvider = createProvider({
     editMode: false,
     isSanckbarOpen: false,
     sanckbarMsg: '',
-    page: 0,
     userData: {
         authenticateToken: null,
         authenticated: true,   
@@ -21,9 +20,9 @@ const AppProvider = createProvider({
     },
     rowsSelected: [],
     bookLists: null,
-    displays: {},
-    booklistLayaout: {},
-    collections: {},
+    displays: null,
+    booklistLayout: null,
+    collections: null,
 })
 
 //Modify m-ui theme color palette
