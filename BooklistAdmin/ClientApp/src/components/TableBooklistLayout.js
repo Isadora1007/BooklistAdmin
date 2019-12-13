@@ -45,7 +45,7 @@ function getSorting(order, orderBy) {
 }
 
 const headCells = [
-    { id: 'layoutId', numeric: true, disablePadding: false, label: 'Layout id', style:{ display: 'none' } },
+    { id: 'layoutId', numeric: true, disablePadding: false, label: 'Layout id', },
     { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
     { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
     { id: 'active', numeric: false, disablePadding: false, label: 'Playing at branch' },
@@ -300,7 +300,7 @@ const EnhancedTable = ({ rows }) => {
                                                 checked={isItemSelected}
                                             />
                                         </TableCell>
-                                        <TableCell style={{ display: 'none' }}>
+                                        <TableCell >
                                             {row.layoutId}
                                         </TableCell>
                                         <TableCell padding='none'>
