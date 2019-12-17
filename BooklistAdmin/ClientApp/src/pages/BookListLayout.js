@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useContext } from 'react'
 import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
+//import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
 import TableBooklistLayout from '../components/TableBooklistLayout'
 import getBookListLayout from '../api/getBookListLayout'
@@ -14,7 +14,6 @@ const BookListLayOut = () => {
         const fetchBookListsLayout = async () => {
             const resposne = await getBookListLayout()
             setGobalValue('booklistLayout', resposne)
-            console.log('epa')
         }
         fetchBookListsLayout()
     }, [])

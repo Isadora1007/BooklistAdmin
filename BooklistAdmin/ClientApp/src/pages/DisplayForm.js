@@ -6,11 +6,8 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
-import SetNewBookList from '../api/SetNewBookList'
-import getBookList from '../api/getBookList'
-import editBookList from '../api/editBookList'
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
+import getDisplays from '../api/getDisplays'
+import BranchSelect from '../components/Select'
 import { Ctx } from '../Context'
 
 const useStyles = makeStyles(theme => ({
@@ -21,25 +18,26 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const DisplayForm = (props) => {
-    const bookListId = !props.location.state.bookListId ? '' : props.location.state.bookListId
     const { state, setGobalValue } = useContext(Ctx)
+    const displayId = !state.rowsSelected ? '' : state.rowsSelected 
     const classes = useStyles()
     let history = useHistory()
 
     const [formState, setFormState] = useState({
         formInputs: {
-            title: '',
-            owner: '',
-            description: '',
-            bibliocommonslisturl: '',
+            displayId: 0,
+            layoutId: 0,
+            booklistId: 0,
+            name: '',
             branch: '',
-            active: false
+            booklist: null,
+            layout: null
         }
     })
 
     useEffect(() => {
         const fetchBookLists = async () => {
-            const resposne = await getBookList(bookListId)
+            const resposne = await getDisplays(displayId)
             setFormState({ ...formState, formInputs: resposne })
         }
         if (state.editMode) {
@@ -56,16 +54,16 @@ const DisplayForm = (props) => {
 
     const submitForm = () => {
         const { formInputs } = formState
-        if (state.editMode) {
-            editBookList(bookListId, JSON.stringify(formInputs))
-            setGobalValue('editMode', false)
-            setGobalValue('sanckbarMsg', `${formInputs.title} was edited`)
-            setGobalValue('isSanckbarOpen', true)
-        } else {
-            SetNewBookList(formInputs)
-            setGobalValue('sanckbarMsg', `${formInputs.title} was created`)
-            setGobalValue('isSanckbarOpen', true)
-        }
+        //if (state.editMode) {
+        //    //editBookList(displayId, JSON.stringify(formInputs))
+        //    setGobalValue('editMode', false)
+        //    setGobalValue('sanckbarMsg', `${formInputs.title} was edited`)
+        //    setGobalValue('isSanckbarOpen', true)
+        //} else {
+        //    SetNewBookList(formInputs)
+        //    setGobalValue('sanckbarMsg', `${formInputs.title} was created`)
+        //    setGobalValue('isSanckbarOpen', true)
+        //}
         history.goBack()
     }
 
@@ -81,47 +79,20 @@ const DisplayForm = (props) => {
         <Fragment>
             <Grid item xs={12}>
                 <Paper className={classes.paper}>
-                    <Typography variant="h3" gutterBottom>display-form</Typography>
+                    <Typography variant="h5" gutterBottom>Display settings</Typography>
                     <form noValidate autoComplete="off">
                         <TextField autoFocus
                             required
                             fullWidth
                             margin="normal"
-                            label="URL list"
-                            value={formState.formInputs.bibliocommonslisturl}
+                            label="Display name"
+                            value={formState.formInputs.name}
                             variant="outlined"
-                            onChange={e => handleChange(e, 'bibliocommonslisturl')}
+                            onChange={e => handleChange(e, 'name')}
                         />
-                        <TextField fullWidth
-                            value={formState.formInputs.title}
-                            margin="normal"
-                            label="Title"
-                            variant="outlined"
-                            onChange={e => handleChange(e, 'title')}
-                        />
-                        <TextField fullWidth
-                            label="Description"
-                            value={formState.formInputs.description}
-                            multiline
-                            rows="8"
-                            margin="normal"
-                            variant="outlined"
-                            onChange={e => handleChange(e, 'description')}
-                        />
-                        <TextField
-                            fullWidth
-                            value={formState.formInputs.owner}
-                            margin="normal"
-                            label="Owner"
-                            variant="outlined"
-                            onChange={e => handleChange(e, 'owner')}
-                        />
-                        <FormControlLabel
-                            control={
-                                <Switch checked={formState.formInputs.active} onChange={e => handleSwitchChange(e, 'active')} value="active" />
-                            }
-                            label="Active"
-                        />
+                        <BranchSelect/>
+                        <BranchSelect />
+                        
                     </form>
                     <Button variant="contained" color="primary" disabled={false} onClick={() => { submitForm() }}>
                         {cta}

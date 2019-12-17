@@ -45,9 +45,9 @@ function getSorting(order, orderBy) {
 }
 
 const headCells = [
-    { id: 'booklistId', numeric: true, disablePadding: false, label: 'Book list id', style: { display: 'none' } },
-    { id: 'title', numeric: false, disablePadding: true, label: 'Title' },
-    { id: 'owner', numeric: false, disablePadding: false, label: 'Owner' },
+    { id: 'displayId', numeric: true, disablePadding: false, label: 'Display id', style: { display: 'none' } },
+    { id: 'displayName', numeric: false, disablePadding: true, label: 'Display name' },
+    { id: 'branch', numeric: false, disablePadding: false, label: 'Branch' },
     { id: 'active', numeric: false, disablePadding: false, label: 'In use' },
 ];
 
@@ -179,7 +179,7 @@ const EnhancedTable = ({ rows }) => {
     const { setGobalValue, state } = useContext(Ctx)
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc')
-    const [orderBy, setOrderBy] = React.useState('booklistId')
+    const [orderBy, setOrderBy] = React.useState('displayId')
 
     const handleRequestSort = (event, property) => {
         const isDesc = orderBy === property && order === 'desc'
@@ -189,7 +189,7 @@ const EnhancedTable = ({ rows }) => {
 
     const handleSelectAllClick = event => {
         if (event.target.checked) {
-            const newSelecteds = rows.map(n => n.booklistId);
+            const newSelecteds = rows.map(n => n.displayId);
             setGobalValue('rowsSelected', newSelecteds)
             return
         }
@@ -212,11 +212,9 @@ const EnhancedTable = ({ rows }) => {
     const isSelected = tile => state.rowsSelected.indexOf(tile) !== -1
 
     const onSelectEdit = () => {
-        const { rowsSelected } = state
         history.push({
             pathname: '/display-form',
             state: {
-                bookListId: rowsSelected,
                 editMode: true
             }
         })
@@ -228,7 +226,7 @@ const EnhancedTable = ({ rows }) => {
 
         if (window.confirm('Are you sure')) {
             const newBookList = bookLists.filter(list => {
-                return list.booklistId !== rowsSelected[0]
+                return list.displayId !== rowsSelected[0]
             })
 
             //const request = await deleteBookList(rowsSelected)
@@ -251,7 +249,7 @@ const EnhancedTable = ({ rows }) => {
 
     const onSelectAdd = () => {
     history.push({
-        pathname: '/new-book-list',
+        pathname: '/display-form',
         state: {
             editMode: false
         }
@@ -286,11 +284,11 @@ const EnhancedTable = ({ rows }) => {
                     <TableBody>
                             {stableSort(rows, getSorting(order, orderBy))
                                 .map(row => {
-                                    const isItemSelected = isSelected(row.booklistId)
+                                    const isItemSelected = isSelected(row.displayId)
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={event => handleClick(event, row.booklistId)}
+                                            onClick={event => handleClick(event, row.displayId)}
                                             role="checkbox"
                                             tabIndex={-1}
                                             key={row.displayId}
@@ -302,7 +300,7 @@ const EnhancedTable = ({ rows }) => {
                                             />
                                         </TableCell>
                                         <TableCell style={{ display: 'none' }}>
-                                            {row.booklistId}
+                                            {row.displayId}
                                         </TableCell>
                                         <TableCell padding='none'>
                                                 {row.name}

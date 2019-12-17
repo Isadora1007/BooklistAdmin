@@ -1,11 +1,9 @@
 import React, { Fragment, useEffect, useContext } from 'react'
 import Grid from '@material-ui/core/Grid'
-import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Table2 from '../components/Table2'
 import getDisplays from '../api/getDisplays'
 import { Ctx } from '../Context'
-
 
 const Displays = () => {
 
